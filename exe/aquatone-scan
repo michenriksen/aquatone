@@ -1,0 +1,76 @@
+#!/usr/bin/env ruby
+
+require "aquatone"
+
+options = {
+  :ports   => Aquatone::PortLists::MEDIUM,
+  :threads => 5,
+  :timeout => 0.5
+}
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: aquatone-scan OPTIONS"
+
+  opts.on("-d", "--domain DOMAIN", "Domain name to assess") do |v|
+    if !Aquatone::Validation.valid_domain_name?(v)
+      puts "#{v} doesn't look like a valid domain name."
+      exit 1
+    end
+    options[:domain] = v
+  end
+
+  opts.on("-p", "--ports PORTS", "Ports to scan") do |v|
+    if v =~ /\A[\d,\s]{1,}\z/
+      ports = v.split(",").map { |p| p.strip.to_i }
+      ports.each do |p|
+        if !Aquatone::Validation.valid_tcp_port?(p)
+          puts "#{p} is not a valid TCP port."
+          exit 1
+        end
+      end
+      options[:ports] = ports
+    else
+      begin
+        options[:ports] = Aquatone::PortLists.port_list_by_name(v.downcase)
+      rescue Aquatone::PortLists::UnknownPortListName => e
+        puts e.message
+        exit 1
+      end
+    end
+  end
+
+  opts.on("--timeout SECONDS", "Timeout in seconds for port probes") do |v|
+    if v.to_f <= 0
+      puts "Timeout can't be zero"
+      exit 1
+    end
+    options[:timeout] = v.to_f
+  end
+
+  opts.on("-t", "--threads THREADS", "Number of concurrent threads to use") do |v|
+    options[:threads] = v.to_i
+  end
+
+  opts.on("-s", "--sleep SECONDS", "Seconds to sleep between port probes") do |v|
+    if v.to_i < 1
+      puts "Sleep can't be less than 1"
+      exit 1
+    end
+    options[:sleep] = v.to_i
+  end
+
+  opts.on("-j", "--jitter PERCENTAGE", "Jitter factor for sleep intervals") do |v|
+    if !v.to_i.between?(1, 100)
+      puts "Jitter factor must be between 1 and 100"
+      exit 1
+    end
+    options[:jitter] = v.to_f
+  end
+
+  opts.on("-h", "--help", "Show help") do
+    puts opts
+    exit 0
+  end
+end.parse!
+
+Aquatone::Commands::Scan.run(options)

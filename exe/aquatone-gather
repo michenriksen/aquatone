@@ -1,0 +1,55 @@
+#!/usr/bin/env ruby
+
+require "aquatone"
+
+options = {
+  :threads   => 5,
+  :timeout   => 15
+}
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: aquatone-gather OPTIONS"
+
+  opts.on("-d", "--domain DOMAIN", "Domain name to assess") do |v|
+    if !Aquatone::Validation.valid_domain_name?(v)
+      puts "#{v} doesn't look like a valid domain name."
+      exit 1
+    end
+    options[:domain] = v
+  end
+
+  opts.on("-t", "--threads THREADS", "Number of concurrent threads to use") do |v|
+    options[:threads] = v.to_i
+  end
+
+  opts.on("--timeout SECONDS", "Timeout for page renderings") do |v|
+    if v.to_i < 1
+      puts "Timeout must be at least 1 second"
+      exit 1
+    end
+    options[:timeout] = v.to_i
+  end
+
+  opts.on("-s", "--sleep SECONDS", "Seconds to sleep between lookups") do |v|
+    if v.to_i < 1
+      puts "Sleep can't be less than 1"
+      exit 1
+    end
+    options[:sleep] = v.to_i
+  end
+
+  opts.on("-j", "--jitter PERCENTAGE", "Jitter factor for sleep intervals") do |v|
+    if !v.to_i.between?(1, 100)
+      puts "Jitter factor must be between 1 and 100"
+      exit 1
+    end
+    options[:jitter] = v.to_f
+  end
+
+  opts.on("-h", "--help", "Show help") do
+    puts opts
+    exit 0
+  end
+end.parse!
+
+Aquatone::Commands::Gather.run(options)
