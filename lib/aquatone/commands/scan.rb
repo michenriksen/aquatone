@@ -85,7 +85,7 @@ module Aquatone
           TCPSocket.new(host, port).close
           true
         end
-      rescue Timeout::Error, Errno::ECONNREFUSED, Errno::EHOSTUNREACH, SocketError
+      rescue Timeout::Error, Errno::ECONNREFUSED, Errno::EHOSTUNREACH, Errno::ENETUNREACH, SocketError
         false
       end
 
