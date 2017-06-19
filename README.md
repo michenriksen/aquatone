@@ -21,6 +21,8 @@ Finally, the tool itself can be installed with the following command in a termin
 
 ## Usage
 
+You will need to use this tool on a host that has an graphical desktop session, or you will experience JSON errors when attempting to use the aquatone-gather function.
+
 ### Discovery
 
 The first stage of an AQUATONE assessment is the discovery stage where subdomains are discovered on the target domain using open sources, services and the more common dictionary brute force approach:
