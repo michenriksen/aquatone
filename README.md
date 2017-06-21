@@ -18,10 +18,10 @@ You will also need a newer version of Ruby installed. If you plan to use AQUATON
 Finally, the tool itself can be installed with the following command in a terminal:
 
     $ gem install aquatone
+    
+IMPORTANT - You will need to use this tool on a host that has an graphical desktop session, or you will experience JSON errors when attempting to use the aquatone-gather function.
 
 ## Usage
-
-You will need to use this tool on a host that has an graphical desktop session, or you will experience JSON errors when attempting to use the aquatone-gather function.
 
 ### Discovery
 
