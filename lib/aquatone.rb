@@ -25,7 +25,7 @@ require "aquatone/collector"
 
 module Aquatone
   AQUATONE_ROOT         = File.expand_path(File.join(File.dirname(__FILE__), "..")).freeze
-  DEFAULT_AQUATONE_PATH = File.join(Dir.home, "aquatone").freeze
+  DEFAULT_AQUATONE_PATH = File.join(Dir.home, ".aquatone").freeze
 
   def self.aquatone_path
     ENV['AQUATONEPATH'] || DEFAULT_AQUATONE_PATH
