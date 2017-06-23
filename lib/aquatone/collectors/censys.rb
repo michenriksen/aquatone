@@ -53,11 +53,31 @@ module Aquatone
               failure(response.parsed_response["error"] || "Censys API encountered error: #{response.code}")
           end
 
-          # Parse the actual response here.
-          
-          print response
+          # If nothing returned from Censys, return:
+          return unless response.parsed_response["results"]
+
+          response.parsed_response["results"].each do |result|
+
+            next unless result["parsed.extensions.subject_alt_name.dns_names"]
+            result["parsed.extensions.subject_alt_name.dns_names"].each do |altdns|
+                add_host(altdns) if altdns.end_with?(".#{domain.name}")
+            end
+
+            next unless result["parsed.names"]
+            result["parsed.names"].each do |parsedname|
+                add_host(parsedname) if parsedname.end_with?(".#{domain.name}")
+            end
+          end
+
+          # Get the next page of results
+          request_censys_page(page + 1) if next_page?(page, response.parsed_response)
 
       end
+
+      def next_page?(page, body)
+          page <= PAGES_TO_PROCESS && body["metadata"]["pages"] && API_RESULTS_PER_PAGE * page < body["metadata"]["count"].to_i
+      end
+
     end
   end
 end
