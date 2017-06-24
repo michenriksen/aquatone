@@ -5,17 +5,15 @@ module Aquatone
         :name         => "Riddler",
         :author       => "Joel (@jolle)",
         :description  => "Uses Riddler by F-Secure to find hostnames",
-        :require_keys => ["riddler"]
+        :require_keys => ["riddler_username", "riddler_password"]
       }
 
       API_BASE_URI = "https://riddler.io"
 
       def run
-        credentials = get_key("riddler").split(":", 2)
-
         auth_response = post_request("#{API_BASE_URI}/auth/login", {
-          :email    => credentials[0].strip,
-          :password => credentials[1].strip
+          :email    => get_key("riddler_username"),
+          :password => get_key("riddler_password")
         }.to_json, {
           :headers  => { "Content-Type" => "application/json" }
         })
