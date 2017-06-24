@@ -5,7 +5,7 @@ module Aquatone
         :name         => "Censys",
         :author       => "James McLean (@vortexau)",
         :description  => "Uses the Censys API to find hostnames in TLS certificates",
-        :require_keys => ["censys","censysid"],
+        :require_keys => ["censys_secret","censys_id"],
       }
 
       API_BASE_URI         = "https://www.censys.io/api/v1".freeze
@@ -21,8 +21,8 @@ module Aquatone
 
           # Censys expects Basic Auth for requests.
           auth = {
-              :username => get_key('censysid'), 
-              :password => get_key('censys')
+              :username => get_key('censys_id'), 
+              :password => get_key('censys_secret')
           }
    
           # Define this is JSON content
