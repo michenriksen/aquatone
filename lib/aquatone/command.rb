@@ -117,7 +117,7 @@ module Aquatone
           return true if c == "\n"
         end
         false
-      rescue IO::EAGAINWaitReadable
+      rescue IO::EAGAINWaitReadable, Errno::EBADF
         false
       rescue Errno::EINTR, Errno::EAGAIN, EOFError
         true

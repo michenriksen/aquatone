@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
  - Capture potential `NameError` exception in `asked_for_progress?` method,
    related to known JRuby bug (issue #4)
+ - Capture potential `Errno::EBADF` exception in `asked_for_progress?` method (issue #15)
+
 
 ## [0.1.1]
 ### Added
