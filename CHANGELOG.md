@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
  - Capture potential `NameError` exception in `asked_for_progress?` method,
    related to known JRuby bug (issue #4)
  - Capture potential `Errno::EBADF` exception in `asked_for_progress?` method (issue #15)
+ - Improve handling of error when aquatone-gather is run on a system without a graphical desktop session (X11)
 
 
 ## [0.1.1]

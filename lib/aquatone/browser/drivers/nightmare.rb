@@ -1,6 +1,9 @@
 module Aquatone
   class Browser
     module Drivers
+
+      class IncompatabilityError < StandardError; end
+
       class Nightmare
         attr_reader :url, :vhost, :html_destination, :headers_destination, :screenshot_destination, :options
 
@@ -23,6 +26,8 @@ module Aquatone
           wout.close
           command_output = rout.readlines.join("\n").strip
           JSON.parse(command_output)
+        rescue JSON::ParserError
+          fail IncompatabilityError, "Nightmarejs must be run on a system with a graphical desktop session (X11)"
         rescue => e
           process.stop if process
           return {

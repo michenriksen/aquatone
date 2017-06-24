@@ -78,17 +78,23 @@ module Aquatone
         @tasks.shuffle.each do |task|
           host, port, domain = task
           pool.schedule do
-            output_progress if asked_for_progress?
-            visit = visit_page(host, port, domain)
-            if visit['success']
-              output("#{green('Processed:')} #{Aquatone::UrlMaker.make(host, port)} (#{domain}) - #{visit['status']}\n")
-              @successful += 1
-            else
-              output("   #{red('Failed:')} #{Aquatone::UrlMaker.make(host, port)} (#{domain}) - #{visit['error']} #{visit['details']}\n")
-              @failed += 1
+            begin
+              output_progress if asked_for_progress?
+              visit = visit_page(host, port, domain)
+              if visit['success']
+                output("#{green('Processed:')} #{Aquatone::UrlMaker.make(host, port)} (#{domain}) - #{visit['status']}\n")
+                @successful += 1
+              else
+                output("   #{red('Failed:')} #{Aquatone::UrlMaker.make(host, port)} (#{domain}) - #{visit['error']} #{visit['details']}\n")
+                @failed += 1
+              end
+              jitter_sleep
+              @task_count += 1
+            rescue Aquatone::Browser::Drivers::IncompatabilityError => e
+              output("\n")
+              output(red("Incompatability Error:") + " #{e.message}\n")
+              exit 1
             end
-            jitter_sleep
-            @task_count += 1
           end
         end
         pool.shutdown
