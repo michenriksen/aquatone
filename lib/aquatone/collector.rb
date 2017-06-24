@@ -66,10 +66,6 @@ module Aquatone
       Aquatone::HttpClient.post(uri, options)
     end
 
-    def parse_html(html)
-      Nokogiri::HTML(html)
-    end
-
     def url_escape(string)
       CGI.escape(string)
     end

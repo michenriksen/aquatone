@@ -10,10 +10,8 @@ module Aquatone
       def run
         response = get_request("https://crt.sh/?dNSName=%25.#{url_escape(domain.name)}")
 
-        parsed = parse_html(response.body)
-
-        parsed.css('table').css('table').css('tr').css('td:nth-child(4)').map do |column|
-          add_host(column.text.gsub("*.", ""))
+        response.body.to_enum(:scan, /<TD>([a-zA-Z0-9_.-]+\.#{domain.name})<\/TD>/).map do |column|
+          add_host(column[0])
         end
       end
     end

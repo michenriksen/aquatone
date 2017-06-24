@@ -7,7 +7,6 @@ require "optparse"
 
 require "httparty"
 require "childprocess"
-require "nokogiri"
 
 require "aquatone/version"
 require "aquatone/port_lists"
