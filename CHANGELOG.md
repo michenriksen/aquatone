@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 ### Changed
+ - Capture potential `NameError` exception in `asked_for_progress?` method,
+   related to known JRuby bug (issue #4)
 
 ## [0.1.1]
 ### Added
@@ -22,5 +24,5 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-[Unreleased]: https://github.com/michenriksen/aquatone/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/michenriksen/aquatone/compare/v0.1.1...HEAD
 [0.1.1]: https://github.com/michenriksen/aquatone/compare/v0.1.0...v0.1.1

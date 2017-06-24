@@ -112,14 +112,18 @@ module Aquatone
     end
 
     def asked_for_progress?
-      while c = STDIN.read_nonblock(1)
-        return true if c == "\n"
+      begin
+        while c = STDIN.read_nonblock(1)
+          return true if c == "\n"
+        end
+        false
+      rescue IO::EAGAINWaitReadable
+        false
+      rescue Errno::EINTR, Errno::EAGAIN, EOFError
+        true
       end
+    rescue NameError
       false
-    rescue IO::EAGAINWaitReadable
-      false
-    rescue Errno::EINTR, Errno::EAGAIN, EOFError
-      true
     end
 
     def has_executable?(name)
