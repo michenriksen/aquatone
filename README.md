@@ -18,8 +18,9 @@ You will also need a newer version of Ruby installed. If you plan to use AQUATON
 Finally, the tool itself can be installed with the following command in a terminal:
 
     $ gem install aquatone
-    
-IMPORTANT - You will need to use this tool on a host that has an graphical desktop session, or you will experience JSON errors when attempting to use the aquatone-gather function.
+
+**IMPORTANT:** AQUATONE's screenshotting capabilities depend on being run on a system with a graphical desktop environment. It is strongly recommended to install and run AQUATONE in a [Kali linux](https://www.kali.org/) virtual machine.
+**I will not provide support or bug fixing for other systems than Kali Linux.**
 
 ## Usage
 
