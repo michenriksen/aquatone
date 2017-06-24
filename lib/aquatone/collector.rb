@@ -56,7 +56,7 @@ module Aquatone
     end
 
     def get_request(uri, options={})
-      Aquatone::HttpClient.get(uri)
+      Aquatone::HttpClient.get(uri, options)
     end
 
     def post_request(uri, body=nil, options={})
