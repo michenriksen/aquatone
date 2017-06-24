@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ## [Unreleased]
 ### Added
  - New Collector: riddler.io (Thanks, [@jolle](https://github.com/jolle)!)
+ - New Collector: crt.sh (Thanks, [@jolle](https://github.com/jolle)!)
  - New Collector: censys.io (Thanks, [@vortexau](https://github.com/vortexau)!)
  - New Collector: passivetotal.org
 
