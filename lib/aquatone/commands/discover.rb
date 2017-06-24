@@ -103,8 +103,7 @@ module Aquatone
                    "#{(task_count.to_f / @hosts.count.to_f * 100.00).round(1)}% done\n")
           end
           if ip = @resolver.resolve(host)
-            next if wildcard_ip?(ip)
-            next if (options[:ignore_private] && private_ip?(ip))
+            next if exclude_ip?(ip)
             @host_dictionary[host] = ip
             output("#{ip.ljust(15)} #{bold(host)}\n")
           end
@@ -157,12 +156,20 @@ module Aquatone
            0 1 2 3 4 5 6 7 8 9).shuffle.take(10).join
       end
 
+      def exclude_ip?(ip)
+        wildcard_ip?(ip) || (options[:ignore_private] && private_ip?(ip)) || broadcast_ip?(ip)
+      end
+
       def wildcard_ip?(ip)
         @wildcard_ips.include?(ip)
       end
 
       def private_ip?(ip)
         ip =~ /(\A127\.)|(\A10\.)|(\A172\.1[6-9]\.)|(\A172\.2[0-9]\.)|(\A172\.3[0-1]\.)|(\A192\.168\.)/
+      end
+
+      def broadcast_ip?(ip)
+        ip == "255.255.255.255"
       end
 
       def skip_collector?(collector)
