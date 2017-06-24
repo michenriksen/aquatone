@@ -11,7 +11,7 @@ module Aquatone
         response = get_request("https://crt.sh/?dNSName=%25.#{url_escape(domain.name)}")
 
         response.body.to_enum(:scan, /<TD>([a-zA-Z0-9_.-]+\.#{domain.name})<\/TD>/).map do |column|
-          add_host(column[0])
+          add_host(column[0].gsub("*.", ""))
         end
       end
     end
