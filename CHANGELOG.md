@@ -6,6 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+ - New Collector: riddler.io (Thanks, [@jolle](https://github.com/jolle)!)
 
 ### Changed
  - Capture potential `NameError` exception in `asked_for_progress?` method,
