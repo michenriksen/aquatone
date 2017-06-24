@@ -9,12 +9,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-## [0.1.2]
-###
-- Added Collector for Censys API - @vortexau
-
-### Changed
-
 ## [0.1.1]
 ### Added
 
