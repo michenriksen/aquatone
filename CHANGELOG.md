@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Added
+
+### Changed
+
+
+## [0.2.0]
+### Added
  - New Collector: riddler.io (Thanks, [@jolle](https://github.com/jolle)!)
  - New Collector: crt.sh (Thanks, [@jolle](https://github.com/jolle)!)
  - New Collector: censys.io (Thanks, [@vortexau](https://github.com/vortexau)!)
@@ -32,5 +38,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-[Unreleased]: https://github.com/michenriksen/aquatone/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/michenriksen/aquatone/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/michenriksen/aquatone/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/michenriksen/aquatone/compare/v0.1.0...v0.1.1
