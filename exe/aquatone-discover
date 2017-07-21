@@ -67,10 +67,11 @@ OptionParser.new do |opts|
 
   opts.on("--list-collectors", "See information on collectors") do
     Aquatone::Collector.descendants.each do |collector|
-      puts "Name.......: #{collector.meta[:name]}"
-      puts "Description: #{collector.meta[:description]}" if collector.meta[:description]
-      puts "Author.....: #{collector.meta[:author]}"
-      puts "Key........: #{collector.sluggified_name}\n\n"
+      puts "Name............: #{collector.meta[:name]}"
+      puts "Description.....: #{collector.meta[:description]}" if collector.meta[:description]
+      puts "Author..........: #{collector.meta[:author]}"
+      puts "Key Requirements: #{collector.meta.key?(:require_keys) ? collector.meta[:require_keys].join(', ') : 'None'}"
+      puts "Key.............: #{collector.sluggified_name}\n\n"
       puts "--------------------------------------------------\n\n"
     end
     exit

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
  - New Tool: aquatone-takeover: Check discovered hosts for subdomain takeover vulnerabilities
 
 ### Changed
+ - Show key requirements in for collectors when issuing `aquatone-discover --list-collectors`
 
 
 ## [0.2.0]
