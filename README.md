@@ -152,6 +152,43 @@ When aquatone-gather is finished, it will have created several directories in th
  * `screenshots/`: Contains PNG images of how each web page looks like in a browser
  * `report/` Contains report files in HTML displaying the gathered information for easy analysis
 
+### Subdomain Takeover
+
+Subdomain takeover is a very prevalent and potentially critical security issue which commonly occurs when an organization assigns a subdomain to a third-party service provider and then later discontinues use, but forgets to remove the DNS configuration. This leaves the subdomain vulnerable to complete takover by attackers by signing up to the same service provider and claiming the dangling subdomain.
+
+aquatone-takeover can be used to check hosts uncovered by aquatone-discover for potential domain takeover vulnerabilities:
+
+    $ aquatone-takeover --domain example.com
+
+aquatone-takeover can detect potential subdomain takeover situations from 25 different service providers, including GitHub Pages, Heroku, Amazon S3, Desk and WPEngine.
+
+#### Results
+
+aquatone-takeover will create a `takeovers.json` file in the domain's assessment directory which will contain information in JSON format about any potential subdomain takeover vulnerabilities:
+
+```
+{
+  "shop.example.com": {
+    "service": "Shopify",
+    "service_website": "https://www.shopify.com/",
+    "description": "Ecommerce platform",
+    "resource": {
+      "type": "CNAME",
+      "value": "shops.myshopify.com"
+    }
+  },
+  "help.example.com": {
+    "service": "Desk",
+    "service_website": "https://www.desk.com/",
+    "description": "Customer service and helpdesk ticket software",
+    "resource": {
+      "type": "CNAME",
+      "value": "example.desk.com"
+    }
+  },
+  ...
+}
+```
 
 ## Contributing
 
