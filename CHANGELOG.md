@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
  - Show key requirements in for collectors when issuing `aquatone-discover --list-collectors`
+ - Add alias `xlarge` to `huge` port list.
 
 
 ## [0.2.0]

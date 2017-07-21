@@ -26,7 +26,7 @@ module Aquatone
         return self::MEDIUM
       when "large"
         return self::LARGE
-      when "huge"
+      when "huge", "xlarge"
         return self::HUGE
       else
         fail UnknownPortListName, "Unknown port list name: #{name}"
