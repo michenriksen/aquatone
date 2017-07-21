@@ -22,6 +22,7 @@ require "aquatone/assessment"
 require "aquatone/report"
 require "aquatone/command"
 require "aquatone/collector"
+require "aquatone/detector"
 
 module Aquatone
   AQUATONE_ROOT         = File.expand_path(File.join(File.dirname(__FILE__), "..")).freeze
@@ -38,6 +39,11 @@ Dir[File.join(File.dirname(__FILE__), "aquatone", "collectors", "*.rb")].each do
   require collector
 end
 
+Dir[File.join(File.dirname(__FILE__), "aquatone", "detectors", "*.rb")].each do |detector|
+  require detector
+end
+
 require "aquatone/commands/discover"
 require "aquatone/commands/scan"
 require "aquatone/commands/gather"
+require "aquatone/commands/takeover"

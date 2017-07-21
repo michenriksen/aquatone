@@ -1,0 +1,113 @@
+#!/usr/bin/env ruby
+
+require "aquatone"
+
+options = {
+  :fallback_nameservers => %w(8.8.8.8 8.8.4.4),
+  :threads => 5,
+}
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: aquatone-takeover OPTIONS"
+
+  opts.on("-d", "--domain DOMAIN", "Domain name to assess") do |v|
+    if !Aquatone::Validation.valid_domain_name?(v)
+      puts "#{v} doesn't look like a valid domain name."
+      exit 1
+    end
+    options[:domain] = v
+  end
+
+  opts.on("--nameservers NAMESERVERS", "Nameservers to use") do |v|
+    ips = v.split(",").map(&:strip).uniq
+    if ips.empty?
+      puts "Nameservers can't be empty."
+      exit 1
+    end
+    ips.each do |ip|
+      if !Aquatone::Validation.valid_ip?(ip)
+        puts "#{ip} is not a valid IP address."
+        exit 1
+      end
+    end
+    options[:nameservers] = ips
+  end
+
+  opts.on("--fallback-nameservers NAMESERVERS", "Nameservers to fall back to") do |v|
+    ips = v.split(",").map(&:strip).uniq
+    if ips.empty?
+      puts "Fallback nameservers can't be empty."
+      exit 1
+    end
+    ips.each do |ip|
+      if !Aquatone::Validation.valid_ip?(ip)
+        puts "#{ip} is not a valid IP address."
+        exit 1
+      end
+    end
+    options[:fallback_nameservers] = ips
+  end
+
+  opts.on("--list-detectors", "See information on subdomain takeover detectors") do
+    Aquatone::Detector.descendants.each do |detector|
+      puts "Service........: #{detector.meta[:service]}"
+      puts "Service Website: #{detector.meta[:service_website]}"
+      puts "Description....: #{detector.meta[:description]}" if detector.meta[:description]
+      puts "Author.........: #{detector.meta[:author]}"
+      puts "Key............: #{detector.sluggified_name}\n\n"
+      puts "--------------------------------------------------\n\n"
+    end
+    exit
+  end
+
+  opts.on("--only-detectors DETECTORS", "Only run specified takeover detectors") do |v|
+    known_detectors = Aquatone::Detector.descendants.map(&:sluggified_name)
+    detectors       = v.split(",").map(&:strip).uniq
+    detectors.each do |detector|
+      if !known_detectors.include?(detector)
+        puts "Unknown takeover detector key: #{detector}"
+        exit 1
+      end
+    end
+    options[:only_detectors] = detectors
+  end
+
+  opts.on("--disable-detectors DETECTORS", "Disable specified takeover detectors") do |v|
+    known_detectors = Aquatone::Detector.descendants.map(&:sluggified_name)
+    detectors       = v.split(",").map(&:strip).uniq
+    detectors.each do |detector|
+      if !known_detectors.include?(detector)
+        puts "Unknown detector key: #{detector}"
+        exit 1
+      end
+    end
+    options[:disable_detectors] = detectors
+  end
+
+  opts.on("-t", "--threads THREADS", "Number of concurrent threads to use") do |v|
+    options[:threads] = v.to_i
+  end
+
+  opts.on("-s", "--sleep SECONDS", "Seconds to sleep between checks") do |v|
+    if v.to_i < 1
+      puts "Sleep can't be less than 1"
+      exit 1
+    end
+    options[:sleep] = v.to_i
+  end
+
+  opts.on("-j", "--jitter PERCENTAGE", "Jitter factor for sleep intervals") do |v|
+    if !v.to_i.between?(1, 100)
+      puts "Jitter factor must be between 1 and 100"
+      exit 1
+    end
+    options[:jitter] = v.to_f
+  end
+
+  opts.on("-h", "--help", "Show help") do
+    puts opts
+    exit 0
+  end
+end.parse!
+
+Aquatone::Commands::Takeover.run(options)
