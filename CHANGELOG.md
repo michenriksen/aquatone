@@ -10,6 +10,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 
+## [0.4.0]
+### Added
+ - Collector module defined CLI options: Collectors can now define their own CLI options for `aquatone-discover`,
+   e.g. `--wordlist` to make the Dictionary collector use a custom wordlist instead of the built-in one.
+   See `aquatone-discover --help` for all new options.
+
+### Changed
+
+### Fixed
+ - Performance improvement in the way collector modules check for duplicate hosts (was only an issue with
+   very large results or dictionaries)
+
+
 ## [0.3.0]
 ### Added
  - New Tool: aquatone-takeover: Check discovered hosts for subdomain takeover vulnerabilities
@@ -47,7 +60,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-[Unreleased]: https://github.com/michenriksen/aquatone/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/michenriksen/aquatone/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/michenriksen/aquatone/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/michenriksen/aquatone/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/michenriksen/aquatone/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/michenriksen/aquatone/compare/v0.1.0...v0.1.1
