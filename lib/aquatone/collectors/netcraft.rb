@@ -4,18 +4,21 @@ module Aquatone
       self.meta = {
         :name        => "Netcraft",
         :author      => "Michael Henriksen (@michenriksen)",
-        :description => "Uses searchdns.netcraft.com to find hostnames"
+        :description => "Uses searchdns.netcraft.com to find hostnames",
+        :cli_options  => {
+          "netcraft-pages PAGES" => "Number of Netcraft pages to process (default: 10)"
+        }
       }
 
-      BASE_URI         = "http://searchdns.netcraft.com/".freeze
-      HOSTNAME_REGEX   = /<a href="http:\/\/(.*?)\/" rel="nofollow">/.freeze
-      RESULTS_PER_PAGE = 20.freeze
-      PAGES_TO_PROCESS = 10.freeze
+      BASE_URI                 = "http://searchdns.netcraft.com/".freeze
+      HOSTNAME_REGEX           = /<a href="http:\/\/(.*?)\/" rel="nofollow">/.freeze
+      RESULTS_PER_PAGE         = 20.freeze
+      DEFAULT_PAGES_TO_PROCESS = 10.freeze
 
       def run
         last  = nil
         count = 0
-        PAGES_TO_PROCESS.times do |i|
+        pages_to_process.times do |i|
           page = i + 1
           if page == 1
             uri = "#{BASE_URI}/?restriction=site+contains&host=*.#{url_escape(domain.name)}&lookup=wait..&position=limited"
@@ -42,6 +45,13 @@ module Aquatone
           hosts << match.last.to_s.strip.downcase
         end
         hosts
+      end
+
+      def pages_to_process
+        if has_cli_option?("netcraft-pages")
+          return get_cli_option("netcraft-pages").to_i
+        end
+        DEFAULT_PAGES_TO_PROCESS
       end
     end
   end

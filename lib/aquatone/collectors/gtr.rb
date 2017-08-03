@@ -5,15 +5,18 @@ module Aquatone
         :name        => "Google Transparency Report",
         :author      => "Michael Henriksen (@michenriksen)",
         :description => "Uses Google Transparency Report to find hostnames",
-        :slug        => "gtr"
+        :slug        => "gtr",
+        :cli_options  => {
+          "gtr-pages PAGES" => "Number of Google Transparency Report pages to process (default: 30)"
+        }
       }
 
-      BASE_URI         = "https://www.google.com/transparencyreport/jsonp/ct/search"
-      PAGES_TO_PROCESS = 30.freeze
+      BASE_URI                 = "https://www.google.com/transparencyreport/jsonp/ct/search"
+      DEFAULT_PAGES_TO_PROCESS = 30.freeze
 
       def run
         token = nil
-        PAGES_TO_PROCESS.times do
+        pages_to_process.times do
           response = parse_response(request_page(token))
           response["results"].each do |result|
             host = result["subject"]
@@ -52,6 +55,13 @@ module Aquatone
         return false if host.start_with?("*.")
         return false unless host.end_with?(".#{domain.name}")
         true
+      end
+
+      def pages_to_process
+        if has_cli_option?("gtr-pages")
+          return get_cli_option("gtr-pages").to_i
+        end
+        DEFAULT_PAGES_TO_PROCESS
       end
     end
   end

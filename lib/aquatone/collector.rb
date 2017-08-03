@@ -23,15 +23,21 @@ module Aquatone
       collectors.sort { |x, y| x.priority <=> y.priority }
     end
 
+    def self.cli_options
+      meta.key?(:cli_options) ? meta[:cli_options] : {}
+    end
+
     def self.sluggified_name
       return meta[:slug].downcase if meta[:slug]
       meta[:name].strip.downcase.gsub(/[^a-z0-9]+/, '-').gsub("--", "-")
     end
 
-    def initialize(domain)
+    def initialize(domain, options)
       check_key_requirements!
-      @domain = domain
-      @hosts  = []
+      @domain          = domain
+      @options         = options
+      @hosts           = []
+      @host_dictionary = {}
     end
 
     def run
@@ -52,7 +58,9 @@ module Aquatone
     def add_host(host)
       host.downcase!
       return unless Aquatone::Validation.valid_domain_name?(host)
-      @hosts << host unless @hosts.include?(host)
+      return if @host_dictionary.key?(host)
+      @host_dictionary[host] = true
+      @hosts << host
     end
 
     def get_request(uri, options={})
@@ -83,6 +91,14 @@ module Aquatone
       Aquatone::KeyStore.key?(name)
     end
 
+    def get_cli_option(name)
+      @options[name.to_s.gsub("-", "_").to_sym]
+    end
+
+    def has_cli_option?(name)
+      @options.key?(name.to_s.gsub("-", "_").to_sym)
+    end
+
     def failure(message)
       fail Error, message
     end
@@ -101,6 +117,13 @@ module Aquatone
       fail InvalidMetadataError, "Metadata is missing key: name" unless meta.key?(:name)
       fail InvalidMetadataError, "Metadata is missing key: author" unless meta.key?(:author)
       fail InvalidMetadataError, "Metadata is missing key: description" unless meta.key?(:description)
+      if meta.key?(:cli_options)
+        fail InvalidMetadataError, "Metadata CLI options is not a hash" unless meta[:cli_options].is_a?(Hash)
+        meta[:cli_options].each_pair do |option, description|
+          fail InvalidMetadataError, "CLI option name is not a string" unless option.is_a?(String)
+          fail InvalidMetadataError, "CLI option details is not a string" unless description.is_a?(String)
+        end
+      end
     end
   end
 end

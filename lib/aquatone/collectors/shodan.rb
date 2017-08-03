@@ -5,12 +5,15 @@ module Aquatone
         :name         => "Shodan",
         :author       => "Michael Henriksen (@michenriksen)",
         :description  => "Uses the Shodan API to find hostnames",
-        :require_keys => ["shodan"]
+        :require_keys => ["shodan"],
+        :cli_options  => {
+          "shodan-pages PAGES" => "Number of Shodan API pages to process (default: 10)"
+        }
       }
 
-      API_BASE_URI         = "https://api.shodan.io/shodan".freeze
-      API_RESULTS_PER_PAGE = 100.freeze
-      PAGES_TO_PROCESS     = 10.freeze
+      API_BASE_URI             = "https://api.shodan.io/shodan".freeze
+      API_RESULTS_PER_PAGE     = 100.freeze
+      DEFAULT_PAGES_TO_PROCESS = 10.freeze
 
       def run
         request_shodan_page
@@ -38,7 +41,14 @@ module Aquatone
       end
 
       def next_page?(page, body)
-        page <= PAGES_TO_PROCESS && body["total"] && API_RESULTS_PER_PAGE * page < body["total"].to_i
+        page <= pages_to_process && body["total"] && API_RESULTS_PER_PAGE * page < body["total"].to_i
+      end
+
+      def pages_to_process
+        if has_cli_option?("shodan-pages")
+          return get_cli_option("shodan-pages").to_i
+        end
+        DEFAULT_PAGES_TO_PROCESS
       end
     end
   end

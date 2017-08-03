@@ -77,7 +77,7 @@ module Aquatone
           next if skip_collector?(collector)
           output("Running collector: #{bold(collector.meta[:name])}... ")
           begin
-            collector_instance = collector.new(@domain)
+            collector_instance = collector.new(@domain, options)
             hosts = collector_instance.execute!
             output("Done (#{hosts.count} #{hosts.count == 1 ? 'host' : 'hosts'})\n")
             @hosts += hosts

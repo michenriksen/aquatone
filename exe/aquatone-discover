@@ -121,6 +121,14 @@ OptionParser.new do |opts|
     options[:jitter] = v.to_f
   end
 
+  Aquatone::Collector.descendants.each do |collector|
+    collector.cli_options.each_pair do |option, description|
+      opts.on("--#{option}", description) do |v|
+        options[option.split(" ").first.gsub("-", "_").to_sym] = v
+      end
+    end
+  end
+
   opts.on("-h", "--help", "Show help") do
     puts opts
     exit 0

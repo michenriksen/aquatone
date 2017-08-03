@@ -6,11 +6,14 @@ module Aquatone
         :author       => "James McLean (@vortexau)",
         :description  => "Uses the Censys API to find hostnames in TLS certificates",
         :require_keys => ["censys_secret","censys_id"],
+        :cli_options  => {
+          "censys-pages PAGES" => "Number of Censys API pages to process (default: 10)"
+        }
       }
 
-      API_BASE_URI         = "https://www.censys.io/api/v1".freeze
-      API_RESULTS_PER_PAGE = 100.freeze
-      PAGES_TO_PROCESS     = 10.freeze
+      API_BASE_URI             = "https://www.censys.io/api/v1".freeze
+      API_RESULTS_PER_PAGE     = 100.freeze
+      DEFAULT_PAGES_TO_PROCESS = 10.freeze
 
       def run
         request_censys_page
@@ -21,10 +24,10 @@ module Aquatone
 
           # Censys expects Basic Auth for requests.
           auth = {
-              :username => get_key('censys_id'), 
+              :username => get_key('censys_id'),
               :password => get_key('censys_secret')
           }
-   
+
           # Define this is JSON content
           headers = {
             'Content-Type' => 'application/json',
@@ -41,11 +44,11 @@ module Aquatone
 
           # Search API documented at https://censys.io/api/v1/docs/search
           response = post_request(
-              "#{API_BASE_URI}/search/certificates", 
+              "#{API_BASE_URI}/search/certificates",
               query.to_json,
               {
                   :basic_auth => auth,
-                  :headers => headers 
+                  :headers => headers
               }
           )
 
@@ -75,9 +78,15 @@ module Aquatone
       end
 
       def next_page?(page, body)
-          page <= PAGES_TO_PROCESS && body["metadata"]["pages"] && API_RESULTS_PER_PAGE * page < body["metadata"]["count"].to_i
+          page <= pages_to_process && body["metadata"]["pages"] && API_RESULTS_PER_PAGE * page < body["metadata"]["count"].to_i
       end
 
+      def pages_to_process
+        if has_cli_option?("censys-pages")
+          return get_cli_option("censys-pages").to_i
+        end
+        DEFAULT_PAGES_TO_PROCESS
+      end
     end
   end
 end
