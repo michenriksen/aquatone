@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
+## [0.4.1]
+
+### Added
+
+### Changed
+
+### Fixed
+ - The Google Transparency Report collector broke because of server-side changes.
 
 ## [0.4.0]
 ### Added
@@ -60,7 +68,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
-[Unreleased]: https://github.com/michenriksen/aquatone/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/michenriksen/aquatone/compare/v0.4.1...HEAD
+[0.4.1]: https://github.com/michenriksen/aquatone/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/michenriksen/aquatone/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/michenriksen/aquatone/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/michenriksen/aquatone/compare/v0.1.1...v0.2.0
