@@ -11,19 +11,19 @@ module Aquatone
         }
       }
 
-      BASE_URI                 = "https://www.google.com/transparencyreport/jsonp/ct/search"
+      BASE_URI                 = "https://www.google.com/transparencyreport/api/v3/httpsreport/ct/certsearch"
       DEFAULT_PAGES_TO_PROCESS = 30.freeze
 
       def run
         token = nil
         pages_to_process.times do
           response = parse_response(request_page(token))
-          response["results"].each do |result|
-            host = result["subject"]
+          hosts    = response.first[1].map { |a| a[1] }.uniq
+          hosts.each do |host|
             add_host(host) if valid_host?(host)
           end
-          break if !response.key?("nextPageToken")
-          token = response["nextPageToken"]
+          _, token, _, current_page, total_pages = response.first.last
+          break if token.nil? || current_page == total_pages
         end
       end
 
@@ -31,23 +31,18 @@ module Aquatone
 
       def request_page(token = nil)
         if token.nil?
-          uri = "#{BASE_URI}?domain=#{url_escape(domain.name)}&incl_exp=true&incl_sub=true&c=_callbacks_._#{random_jsonp_callback}"
+          uri = "#{BASE_URI}?domain=#{url_escape(domain.name)}&include_expired=true&include_subdomains=true"
         else
-          uri = "#{BASE_URI}?domain=#{url_escape(domain.name)}&incl_exp=true&incl_sub=true&token=#{url_escape(token)}&c=_callbacks_._#{random_jsonp_callback}"
+          uri = "#{BASE_URI}/page?domain=#{url_escape(domain.name)}&include_expired=true&include_subdomains=true&p=#{url_escape(token)}"
         end
 
         get_request(uri,
-          { :headers => { "Referer" => "https://www.google.com/transparencyreport/https/ct/?hl=en-US" } }
+          { :format => :plain, :headers => { "Referer" => "https://transparencyreport.google.com/https/certificates" } }
         )
       end
 
-      def random_jsonp_callback
-        "abcdefghijklmnopqrstuvwxyz0123456789".split("").sample(9).join
-      end
-
       def parse_response(body)
-        body = body.split("(", 2).last
-        body.gsub!(");", "")
+        body = body.split("\n", 2).last.strip
         JSON.parse(body)
       end
 
