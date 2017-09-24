@@ -74,6 +74,8 @@ module Aquatone
         @failed     = 0
         @start_time = Time.now.to_i
         @visits     = []
+        @alive      = []
+        @alive_txt  = File.join(@assessment.path, "alive.txt")
         output("Processing #{bold(@tasks.count)} pages...\n")
         @tasks.shuffle.each do |task|
           host, port, domain = task
@@ -84,6 +86,7 @@ module Aquatone
               if visit['success']
                 output("#{green('Processed:')} #{Aquatone::UrlMaker.make(host, port)} (#{domain}) - #{visit['status']}\n")
                 @successful += 1
+                @alive.push(Aquatone::UrlMaker.make(host, port))
               else
                 output("   #{red('Failed:')} #{Aquatone::UrlMaker.make(host, port)} (#{domain}) - #{visit['error']} #{visit['details']}\n")
                 @failed += 1
@@ -98,8 +101,11 @@ module Aquatone
           end
         end
         pool.shutdown
+        File.open(@alive_txt, "w") do |f|
+          f.puts(@alive)
+        end
         output("\nFinished processing pages:\n\n")
-        output(" - Successful : #{bold(green(@successful))}\n")
+        output(" - Successful : #{bold(green(@successful))} (check alive.txt)\n")
         output(" - Failed     : #{bold(red(@failed))}\n\n")
       end
 
