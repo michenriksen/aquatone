@@ -87,6 +87,7 @@ module Aquatone
                 output("#{green('Processed:')} #{Aquatone::UrlMaker.make(host, port)} (#{domain}) - #{visit['status']}\n")
                 @successful += 1
                 @alive.push(Aquatone::UrlMaker.make(host, port))
+                @alive.push(Aquatone::UrlMaker.make(domain, port))
               else
                 output("   #{red('Failed:')} #{Aquatone::UrlMaker.make(host, port)} (#{domain}) - #{visit['error']} #{visit['details']}\n")
                 @failed += 1
