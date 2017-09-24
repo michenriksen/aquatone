@@ -31,7 +31,7 @@ cut -f2 -d, hosts.txt \
 echo "[+] nmap'ing $(wc -l hosts.nmap)..."
 sudo nmap -iL hosts.nmap \
     -oG output.nmap \
-    -PS 80 -n -v \
+    -Pn -n -v \
     -sS -p ${SCAN_PORTS} --open \
     | grep left
 sudo chmod 666 output.nmap
