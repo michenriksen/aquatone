@@ -41,7 +41,7 @@ echo "[>] building urls"
 grep -Po 'Host: ([0-9]{1,3}\.){3}[0-9]{1,3}.*Ports:.*' output.nmap \
     | sed -r 's/Host: />/g' \
     | sed -r 's/\s+Ignored.*//g' \
-    | grep -Po '([0-9.>]{2,5})+' \
+    | grep -Po '(>([0-9]{1,3}\.){3}[0-9]{1,3}|[0-9]{2,5})' \
     | xargs \
     | tr -cs '[0-9].>' ',' \
     | tr '>' '\n' \
