@@ -12,9 +12,10 @@ module Aquatone
       def run
         response = get_request("http://web.archive.org/cdx/search/cdx?url=*.#{url_escape(domain.name)}&output=json&fl=original&collapse=urlkey")
 
-        response.parsed_response do |page|
+        response.parsed_response.each do |page|
           if page[0] != "original"
               add_host(URI.parse(page[0]).host)
+          end
         end
       end
     end
