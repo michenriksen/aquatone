@@ -2,7 +2,7 @@ require 'uri'
 
 module Aquatone
   module Collectors
-    class Crtsh < Aquatone::Collector
+    class WaybackMachine < Aquatone::Collector
       self.meta = {
         :name         => "Wayback Machine",
         :author       => "Joel (@jolle)",
