@@ -78,6 +78,10 @@ module Aquatone
       CGI.escape(string)
     end
 
+    def regex_escape(string)
+      Regexp.escape(string)
+    end
+
     def random_sleep(seconds)
       random_sleep = ((1 - (rand(30) * 0.01)) * seconds.to_i)
       sleep(random_sleep)
