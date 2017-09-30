@@ -84,6 +84,8 @@ module Aquatone
           rescue Aquatone::Collector::MissingKeyRequirement => e
             output(yellow("Skipped\n"))
             output(yellow(" -> #{e.message}\n"))
+          rescue Timeout::Error
+            output(red("Timed out\n"))
           rescue => e
             output(red("Error\n"))
             output(red(" -> #{e.message}\n"))
