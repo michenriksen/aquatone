@@ -21,7 +21,9 @@ module Aquatone
         end
         response.parsed_response.each do |page|
           if page[0] != "original"
+            begin
               add_host(URI.parse(page[0]).host)
+            rescue URI::Error; end
           end
         end
       end
