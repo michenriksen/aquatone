@@ -31,9 +31,10 @@ cut -f2 -d, hosts.txt \
 echo "[+] nmap'ing $(wc -l hosts.nmap)..."
 sudo nmap -iL hosts.nmap \
     -oG output.nmap \
-    -Pn -n -v \
+    -PE -PP -PS80,443 -PA3389 -PU40125 -PY \
+    -g 53 -n -v \
     -sS -p ${SCAN_PORTS} --open \
-    | grep left
+    | grep 'Completed SYN Stealth Scan against'
 sudo chmod 666 output.nmap
 
 # sort through and make a list
