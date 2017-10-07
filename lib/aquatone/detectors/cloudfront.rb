@@ -14,7 +14,7 @@ module Aquatone
       def run
         return false unless cname_resource?
         if resource_value.end_with?(CNAME_VALUE)
-          return get_request("http://#{host}/").body.include?(RESPONSE_FINGERPRINT)
+          return get_request("http://#{host}/").body.include?(RESPONSE_FINGERPRINT) && get_request("https://#{host}/").body.include?(RESPONSE_FINGERPRINT)
         end
         false
       end
