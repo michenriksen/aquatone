@@ -60,13 +60,6 @@ module Aquatone
       def timeout
         if has_cli_option?("wayback-machine-timeout")
           return get_cli_option("wayback-machine-timeout").to_i
-          timeout_option = get_cli_option("wayback-machine-pages")
-
-          if timeout_option == "none"
-            return nil
-          else
-            return timeout_option.to_i
-          end
         end
         DEFAULT_TIMEOUT
       end
@@ -74,13 +67,6 @@ module Aquatone
       def page_timeout
         if has_cli_option?("wayback-machine-page-timeout")
           return get_cli_option("wayback-machine-page-timeout").to_i
-          page_timeout_option = get_cli_option("wayback-machine-pages")
-
-          if page_timeout_option == "none"
-            return nil
-          else
-            return page_timeout_option.to_i
-          end
         end
         DEFAULT_PAGE_TIMEOUT
       end
