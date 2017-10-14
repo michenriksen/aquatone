@@ -1,4 +1,3 @@
-# https://www.threatminer.org/getData.php?e=subdomains_container&q=hs.fi&t=0&rt=10&p=1
 module Aquatone
   module Collectors
     class ThreatMiner < Aquatone::Collector
