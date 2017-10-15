@@ -16,7 +16,7 @@ module Aquatone
 
         response.parsed_response.each do |cert|
           cert['dns_names'].each do |name|
-            if /\.#{Regexp.escape(domain.name)}$/.match?(name) or name == domain.name
+            if /\.#{Regexp.escape(domain.name)}$/.match(name) or name == domain.name
               add_host(name)
             end
           end
