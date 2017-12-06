@@ -28,8 +28,14 @@ cd ~/aquatone/${domain}
 
 ## get uniq ips
 echo "[>] sorting ips"
+sort -fu hosts.txt \
+    > hosts.tmp
+
+vim hosts.tmp
+mv hosts.tmp hosts.txt
+
 cut -f2 -d, hosts.txt \
-    | sort -u \
+    | sort -fu \
     > hosts.nmap
 
 ## scan through nmap
