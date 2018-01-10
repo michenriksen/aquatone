@@ -16,9 +16,16 @@ module Aquatone
         setup_resolver
         identify_wildcard_ips
         run_collectors
-        resolve_hosts
-        output_summary
-        write_to_hosts_file
+        if !options[:do_not_resolve]
+          resolve_hosts
+        else
+          @hosts.each do |host|
+            @host_dictionary[host] = ''
+            output("Saving #{bold(host)} without resolving.\n")
+          end
+          output_summary
+          write_to_hosts_file
+        end
       rescue Aquatone::Domain::UnresolvableDomain => e
         output(red("Error: #{e.message}\n"))
       end
