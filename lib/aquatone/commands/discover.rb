@@ -11,6 +11,7 @@ module Aquatone
         @assessment      = Aquatone::Assessment.new(options[:domain])
         @hosts           = [options[:domain]]
         @host_dictionary = {}
+        @keep_unresolved = options[:keep_unresolved]
 
         banner("Discover")
         setup_resolver
@@ -108,6 +109,9 @@ module Aquatone
             next if exclude_ip?(ip)
             @host_dictionary[host] = ip
             output("#{ip.ljust(15)} #{bold(host)}\n")
+          elsif @keep_unresolved
+            @host_dictionary[host] = ""
+            output("#{''.ljust(15)} #{bold(host)}\n")
           end
           jitter_sleep
           task_count += 1
