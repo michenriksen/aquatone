@@ -1,15 +1,15 @@
 module Aquatone
   module Detectors
-    class Shopify < Aquatone::Detector
+    class BitBucket < Aquatone::Detector
       self.meta = {
-        :service         => "Shopify",
-        :service_website => "https://shopify.com/",
+        :service         => "BitBucket",
+        :service_website => "https://bitbucket.org/",
         :author          => "Alessandro De Micheli (@eur0pa_)",
-        :description     => "Shop hosting"
+        :description     => "Bitbucket static page hosting"
       }
 
-      CNAME_VALUE          = ".myshopify.com".freeze
-      RESPONSE_FINGERPRINT = "Sorry, this shop is currently unavailable".freeze
+      CNAME_VALUE          = "bitbucket.org".freeze
+      RESPONSE_FINGERPRINT = "The page you have requested does not exist".freeze
 
       def run
         return false unless cname_resource?

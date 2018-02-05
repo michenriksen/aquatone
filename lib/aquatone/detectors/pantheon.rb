@@ -1,15 +1,15 @@
 module Aquatone
   module Detectors
-    class Shopify < Aquatone::Detector
+    class Pantheon < Aquatone::Detector
       self.meta = {
-        :service         => "Shopify",
-        :service_website => "https://shopify.com/",
+        :service         => "Pantheon",
+        :service_website => "https://pantheonsite.io/",
         :author          => "Alessandro De Micheli (@eur0pa_)",
-        :description     => "Shop hosting"
+        :description     => "Web content hosting"
       }
 
-      CNAME_VALUE          = ".myshopify.com".freeze
-      RESPONSE_FINGERPRINT = "Sorry, this shop is currently unavailable".freeze
+      CNAME_VALUE          = "pantheonsite.io".freeze
+      RESPONSE_FINGERPRINT = "The gods are wise".freeze
 
       def run
         return false unless cname_resource?

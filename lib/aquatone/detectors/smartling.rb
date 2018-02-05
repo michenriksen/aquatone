@@ -1,15 +1,15 @@
 module Aquatone
   module Detectors
-    class Shopify < Aquatone::Detector
+    class Smartling < Aquatone::Detector
       self.meta = {
-        :service         => "Shopify",
-        :service_website => "https://shopify.com/",
+        :service         => "Smartling",
+        :service_website => "https://smartling.com/",
         :author          => "Alessandro De Micheli (@eur0pa_)",
-        :description     => "Shop hosting"
+        :description     => "Content translation and localization"
       }
 
-      CNAME_VALUE          = ".myshopify.com".freeze
-      RESPONSE_FINGERPRINT = "Sorry, this shop is currently unavailable".freeze
+      CNAME_VALUE          = "smartling.com".freeze
+      RESPONSE_FINGERPRINT = "Domain is not configured".freeze
 
       def run
         return false unless cname_resource?

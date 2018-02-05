@@ -8,7 +8,7 @@ module Aquatone
         :description     => "Landing page platform"
       }
 
-      CNAME_VALUES          = %w(pageserve.co secure.pageserve.co).freeze
+      CNAME_VALUES          = %w(pageserve.co secure.pageserve.co instapage.co).freeze
       RESPONSE_FINGERPRINT = "You've Discovered A Missing Link. Our Apologies!".freeze
 
       def run
