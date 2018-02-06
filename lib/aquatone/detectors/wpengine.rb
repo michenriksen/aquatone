@@ -10,7 +10,7 @@ module Aquatone
 
       APEX_VALUE           = "130.211.160.56".freeze
       CNAME_VALUE          = ".wpengine.com".freeze
-      RESPONSE_FINGERPRINT = "but is not configured for an account on our platform.".freeze
+      RESPONSE_FINGERPRINT = "The site you were looking for is no longer available at this IP address".freeze
 
       def run
         if apex_resource?
