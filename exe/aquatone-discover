@@ -49,6 +49,10 @@ OptionParser.new do |opts|
     options[:fallback_nameservers] = ips
   end
 
+  opts.on("--include-wildcard", "Include wildcard domains. !!! DISABLE DICTIONARY COLLECTOR !!!") do |v|
+    options[:include_wildcard] = v
+  end
+
   opts.on("--[no-]ignore-private", "Ignore hosts resolving to private IP addresses") do |v|
     options[:ignore_private] = v
   end
