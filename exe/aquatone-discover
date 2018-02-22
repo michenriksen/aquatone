@@ -5,7 +5,8 @@ require "aquatone"
 options = {
   :fallback_nameservers => %w(8.8.8.8 8.8.4.4),
   :threads => 5,
-  :ignore_private => true
+  :ignore_private => true,
+  :do_not_resolve => false
 }
 
 OptionParser.new do |opts|
@@ -59,6 +60,10 @@ OptionParser.new do |opts|
 
   opts.on("--[no-]ignore-private", "Ignore hosts resolving to private IP addresses") do |v|
     options[:ignore_private] = v
+  end
+
+  opts.on("--do-not-resolve", "Do not resolve the domains found") do |v|
+    options[:do_not_resolve] = v
   end
 
   opts.on("--set-key KEY VALUE", "Save a key to key store") do |key|
