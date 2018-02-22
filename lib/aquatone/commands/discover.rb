@@ -24,9 +24,9 @@ module Aquatone
             @host_dictionary[host] = ''
             output("Saving #{bold(host)} without resolving.\n")
           end
-          output_summary
-          write_to_hosts_file
         end
+        output_summary
+        write_to_hosts_file
       rescue Aquatone::Domain::UnresolvableDomain => e
         output(red("Error: #{e.message}\n"))
       end
