@@ -11,6 +11,10 @@ options = {
 OptionParser.new do |opts|
   opts.banner = "Usage: aquatone-discover OPTIONS"
 
+  opts.on("--keep-unresolved", "Keep domains regardless of resovability") do |v|
+    options[:keep_unresolved] = v
+  end
+
   opts.on("-d", "--domain DOMAIN", "Domain name to assess") do |v|
     if !Aquatone::Validation.valid_domain_name?(v)
       puts "#{v} doesn't look like a valid domain name."
