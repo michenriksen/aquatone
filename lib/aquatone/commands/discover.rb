@@ -60,11 +60,11 @@ module Aquatone
       end
 
       def identify_wildcard_ips
+        @wildcard_ips   = []
         if options[:include_wildcard]
           return
         end
         output("Checking for wildcard DNS... ")
-        @wildcard_ips   = []
         wildcard_domain = "#{random_string}.#{@domain.name}"
         if @resolver.resolve(wildcard_domain).nil?
           output("Done\n")
