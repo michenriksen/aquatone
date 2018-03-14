@@ -15,7 +15,8 @@ module Aquatone
 
       def run
         if apex_resource?
-          return false unless APEX_VALUES.include?(IPAddr.new(resource_value)))
+          return false unless APEX_VALUES.include?(IPAddr.new(resource_value))
+        end
         return get_request("http://#{host}/").body.include?(RESPONSE_FINGERPRINT)
       end
     end
