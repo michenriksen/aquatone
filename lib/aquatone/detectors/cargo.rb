@@ -8,9 +8,12 @@ module Aquatone
         :description     => "Web publishing platform"
       }
 
-      APEX_VALUE           = "173.203.204.123".freeze
-      CNAME_VALUE          = "cargocollective.com".freeze
-      RESPONSE_FINGERPRINT = "Use a personal domain name".freeze
+      APEX_VALUE            = "173.203.204.123".freeze
+      CNAME_VALUE           = "cargocollective.com".freeze
+      RESPONSE_FINGERPRINTS = [
+        "Use a personal domain name",
+        "404 Not Found"
+      ].freeze
 
       def run
         if apex_resource?
@@ -18,7 +21,7 @@ module Aquatone
         elsif cname_resource?
           return false unless resource_value == CNAME_VALUE
         end
-        get_request("http://#{host}/").body.include?(RESPONSE_FINGERPRINT)
+        get_request("http://#{host}/").body.include?(RESPONSE_FINGERPRINTS)
       end
     end
   end

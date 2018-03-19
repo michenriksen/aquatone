@@ -8,8 +8,8 @@ module Aquatone
         :description     => "Project hosting"
       }
 
-      APEX_VALUE           = "138.197.235.123"
-      CNAME_VALUE          = "tilda.sh".freeze
+      APEX_VALUE           = "45.55.110.124"
+      CNAME_VALUE          = "na-west1.surge.sh".freeze
       RESPONSE_FINGERPRINT = "project not found".freeze
 
       def run

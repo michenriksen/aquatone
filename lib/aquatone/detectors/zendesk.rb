@@ -9,7 +9,7 @@ module Aquatone
       }
 
       CNAME_VALUE          = ".zendesk.com".freeze
-      RESPONSE_FINGERPRINT = "<title>Help Center Closed | Zendesk</title>".freeze
+      RESPONSE_FINGERPRINT = "Oops, this help center no longer exists".freeze
 
       def run
         return false unless cname_resource?

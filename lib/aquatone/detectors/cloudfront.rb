@@ -10,12 +10,12 @@ module Aquatone
 
       CNAME_VALUE          = ".cloudfront.net".freeze
       RESPONSE_FINGERPRINT = "The request could not be satisfied".freeze
-      RESPONSE_FALSE_POSITIVE = "Failed to contact the origin".freeze
 
       def run
         return false unless cname_resource?
         if resource_value.end_with?(CNAME_VALUE)
-          return get_request("http://#{host}/").body.include?(RESPONSE_FINGERPRINT) && get_request("https://#{host}/").body.include?(RESPONSE_FINGERPRINT) && ! get_request("http://#{host}/").body.include?(RESPONSE_FALSE_POSITIVE)
+          return get_request("http://#{host}/").body.include?(RESPONSE_FINGERPRINT) \
+              && get_request("https://#{host}/").body.include?(RESPONSE_FINGERPRINT)
         end
         false
       end

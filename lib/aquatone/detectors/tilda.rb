@@ -9,14 +9,14 @@ module Aquatone
       }
 
       APEX_VALUE           = "178.248.234.146"
-      CNAME_VALUE          = "tilda.ws".freeze
+      CNAME_VALUES         = %w(tilda.sh tilda.ws).freeze
       RESPONSE_FINGERPRINT = "Domain has been assigned".freeze
 
       def run
         if apex_resource?
-          return false unless APEX_VALUES.include?(resource_value)
+          return false unless resource_value == APEX_VALUE
         elsif cname_resource?
-          return false unless resource_value.end_with?(CNAME_VALUE)
+          return false unless CNAME_VALUES.include?(resource_value)
         end
         return get_request("http://#{host}/").body.include?(RESPONSE_FINGERPRINT)
       end

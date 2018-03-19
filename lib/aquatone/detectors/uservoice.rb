@@ -18,9 +18,7 @@ module Aquatone
         return false unless cname_resource?
         if resource_value.end_with?(CNAME_VALUE)
           response = get_request("http://#{host}/")
-          RESPONSE_FINGERPRINTS.each do |fingerprint|
-            return true if response.body.include?(fingerprint)
-          end
+          return false unless response.body.include?(RESPONSE_FINGERPRINTS)
         end
         false
       end
