@@ -11,12 +11,20 @@ module Aquatone
         @assessment      = Aquatone::Assessment.new(options[:domain])
         @hosts           = [options[:domain]]
         @host_dictionary = {}
+        @keep_unresolved = options[:keep_unresolved]
 
         banner("Discover")
         setup_resolver
         identify_wildcard_ips
         run_collectors
-        resolve_hosts
+        if !options[:do_not_resolve]
+          resolve_hosts
+        else
+          @hosts.each do |host|
+            @host_dictionary[host] = ''
+            output("Saving #{bold(host)} without resolving.\n")
+          end
+        end
         output_summary
         write_to_hosts_file
       rescue Aquatone::Domain::UnresolvableDomain => e
@@ -52,8 +60,11 @@ module Aquatone
       end
 
       def identify_wildcard_ips
-        output("Checking for wildcard DNS... ")
         @wildcard_ips   = []
+        if options[:include_wildcard]
+          return
+        end
+        output("Checking for wildcard DNS... ")
         wildcard_domain = "#{random_string}.#{@domain.name}"
         if @resolver.resolve(wildcard_domain).nil?
           output("Done\n")
@@ -108,6 +119,9 @@ module Aquatone
             next if exclude_ip?(ip)
             @host_dictionary[host] = ip
             output("#{ip.ljust(15)} #{bold(host)}\n")
+          elsif @keep_unresolved
+            @host_dictionary[host] = ""
+            output("#{''.ljust(15)} #{bold(host)}\n")
           end
           jitter_sleep
           task_count += 1

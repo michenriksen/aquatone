@@ -8,13 +8,16 @@ module Aquatone
         :description     => "Knowledge base software"
       }
 
-      CNAME_VALUE          = ".helpjuice.com".freeze
-      RESPONSE_FINGERPRINT = "<title>No such app</title>".freeze
+      CNAME_VALUE           = ".helpjuice.com".freeze
+      RESPONSE_FINGERPRINTS = [
+        "<title>No such app</title>",
+        "We could not find what you're looking for"
+      ].freeze
 
       def run
         return false unless cname_resource?
         if resource_value.end_with?(CNAME_VALUE)
-          return get_request("http://#{host}/").body.include?(RESPONSE_FINGERPRINT)
+          return get_request("http://#{host}/").body.include?(RESPONSE_FINGERPRINTS)
         end
         false
       end
