@@ -5,7 +5,7 @@ require "aquatone"
 options = {
   :fallback_nameservers => %w(8.8.8.8 8.8.4.4),
   :threads => 5,
-  :ignore_private => true
+  :ignore_private => true,
   :do_not_resolve => false
 }
 
