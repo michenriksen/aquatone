@@ -10,7 +10,7 @@ module Aquatone
 
       APEX_VALUE           = "66.6.44.4".freeze
       CNAME_VALUE          = "domains.tumblr.com".freeze
-      RESPONSE_FINGERPRINT = "Whatever you were looking for doesn't currently exist at this address.".freeze
+      RESPONSE_FINGERPRINT = "There's nothing here".freeze
 
       def run
         if apex_resource?

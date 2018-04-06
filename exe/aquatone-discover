@@ -6,10 +6,15 @@ options = {
   :fallback_nameservers => %w(8.8.8.8 8.8.4.4),
   :threads => 5,
   :ignore_private => true
+  :do_not_resolve => false
 }
 
 OptionParser.new do |opts|
   opts.banner = "Usage: aquatone-discover OPTIONS"
+
+  opts.on("--keep-unresolved", "Keep domains regardless of resovability") do |v|
+    options[:keep_unresolved] = v
+  end
 
   opts.on("-d", "--domain DOMAIN", "Domain name to assess") do |v|
     if !Aquatone::Validation.valid_domain_name?(v)
@@ -49,8 +54,16 @@ OptionParser.new do |opts|
     options[:fallback_nameservers] = ips
   end
 
+  opts.on("--include-wildcard", "Include wildcard domains. !!! DISABLE DICTIONARY COLLECTOR !!!") do |v|
+    options[:include_wildcard] = v
+  end
+
   opts.on("--[no-]ignore-private", "Ignore hosts resolving to private IP addresses") do |v|
     options[:ignore_private] = v
+  end
+
+  opts.on("--do-not-resolve", "Do not resolve the domains found") do |v|
+    options[:do_not_resolve] = v
   end
 
   opts.on("--set-key KEY VALUE", "Save a key to key store") do |key|

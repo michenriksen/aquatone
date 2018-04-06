@@ -1540,6 +1540,7 @@ cronos
 cross
 crown
 crs
+crucible
 cruise
 cruisecontrol
 crux
@@ -2013,6 +2014,11 @@ docker03
 docker1
 docker2
 docker3
+docker-registry
+docker-release
+docker-snapshots
+docker-dev
+private-docker-registry
 docs
 doctor
 documentacion
@@ -2459,6 +2465,7 @@ firmy
 first
 fis
 fish
+fisheye
 fisher
 fisto
 fitness
@@ -2657,6 +2664,7 @@ george
 georgia
 german
 germany
+gerrit
 gestion
 get
 gf
@@ -6278,6 +6286,8 @@ soleil
 solo
 solr
 solutions
+sonar
+sonarqube
 song
 sonia
 sonic
@@ -6294,6 +6304,7 @@ sound
 source
 sourcecode
 sourcesafe
+sourcetree
 south
 southcarolina
 southdakota
@@ -6664,6 +6675,7 @@ tea
 teacher
 team
 teamcenter
+teamcity
 teamspeak
 teamware
 teamwork
