@@ -17,14 +17,7 @@ module Aquatone
         end
 
         def visit
-          rout, wout = IO.pipe
-          process           = ChildProcess.build(*construct_command)
-          process.cwd       = Aquatone::AQUATONE_ROOT
-          process.io.stdout = wout
-          process.start
-          process.poll_for_exit(options[:timeout])
-          wout.close
-          command_output = rout.readlines.join("\n").strip
+          command_output = `#{construct_command.join(' ')}`
           JSON.parse(command_output)
         rescue JSON::ParserError
           fail IncompatabilityError, "Nightmarejs must be run on a system with a graphical desktop session (X11)"
