@@ -67,7 +67,12 @@ module Aquatone
       when 'x-permitted-cross-domain-policies'
         :success if value.downcase == 'master-only'
       when 'x-content-type-options'
-        :success if value.downcase == 'nosniff'
+        value = value.join(",")
+        if value.downcase == 'nosniff'
+          :success
+        else
+          :danger
+        end
       when 'strict-transport-security'
         :success
       when 'x-frame-options'
@@ -75,6 +80,7 @@ module Aquatone
       when 'public-key-pins'
         :success
       when 'x-xss-protection'
+        value = value.join(",")
         if value.start_with?('1')
           :success
         else
