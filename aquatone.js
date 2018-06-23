@@ -120,9 +120,13 @@ nightmare
     visit.code   = result.code;
     visit.status = result.code + " " + (HTTP_RESPONSES[visit.code] || "(unknown)")
     var headers  = {};
-    for (var k in result.headers) {
-      headers[prettyHeader(k)] = result.headers[k].join(" ");
-    }
+	for (var k in result.headers) {
+		if(typeof result.headers[k] === "array") {
+			headers[prettyHeader(k)] = result.headers[k].join(" ");
+		} else {
+			headers[prettyHeader(k)] = result.headers[k];
+		}
+	}
     visit.headers = headers;
     return nightmare
       .wait(1000)
