@@ -8,7 +8,7 @@ module Aquatone
         :description     => "GitHub static website hosting"
       }
 
-      APEX_VALUES          = %w(192.30.252.153 192.30.252.154).freeze
+      APEX_VALUES          = %w(192.30.252.153 192.30.252.154 185.199.108.153 185.199.109.153 185.199.110.153 185.199.111.153).freeze
       CNAME_VALUE          = ".github.io".freeze
       RESPONSE_FINGERPRINT = "There isn't a GitHub Pages site here.".freeze
 
