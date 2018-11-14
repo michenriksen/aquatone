@@ -85,7 +85,8 @@ func (a *URLScreenshotter) screenshotURL(s string) {
 		"--disable-crash-reporter",
 		"--ignore-certificate-errors",
 		"--user-agent=" + RandomUserAgent(),
-		"--window-size=" + *a.session.Options.Resolution, "--screenshot=" + filePath,
+		"--window-size=" + *a.session.Options.Resolution,
+		"--screenshot=" + filePath,
 	}
 
 	if os.Geteuid() == 0 {

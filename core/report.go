@@ -304,7 +304,7 @@ func NewReport(data ReportData) *Report {
 	}
 }
 
-func NewCluster(urls []string, session *Session) ([]Page, error) {
+func NewCluster(urls []ResponsiveURL, session *Session) ([]Page, error) {
 	var cluster []Page
 	for _, url := range urls {
 		page, err := NewPage(url, session)
@@ -317,10 +317,10 @@ func NewCluster(urls []string, session *Session) ([]Page, error) {
 	return cluster, nil
 }
 
-func NewPage(url string, session *Session) (Page, error) {
-	baseFilename := session.BaseFilenameFromURL(url)
+func NewPage(url ResponsiveURL, session *Session) (Page, error) {
+	baseFilename := session.BaseFilenameFromURL(url.URL)
 	page := Page{
-		URL:            url,
+		URL:            url.URL,
 		HeadersPath:    fmt.Sprintf("headers/%s.txt", baseFilename),
 		BodyPath:       fmt.Sprintf("html/%s.html", baseFilename),
 		ScreenshotPath: fmt.Sprintf("screenshots/%s.png", baseFilename),

@@ -77,19 +77,35 @@ func (s *Stats) IncrementScreenshotFailed() {
 	atomic.AddUint32(&s.ScreenshotFailed, 1)
 }
 
+type Tag struct {
+	Text string
+}
+
+type Note struct {
+	Text string
+	Type string
+}
+
+type ResponsiveURL struct {
+	URL   string
+	Tags  []Tag
+	Notes []Note
+}
+
 type Session struct {
 	sync.Mutex
 	Version        string
 	Options        Options `json:"-"`
 	Out            *Logger `json:"-"`
 	Stats          *Stats
-	ResponsiveURLs []string
+	ResponsiveURLs map[string]ResponsiveURL
 	Ports          []int
 	EventBus       EventBus.Bus                  `json:"-"`
 	WaitGroup      sizedwaitgroup.SizedWaitGroup `json:"-"`
 }
 
 func (s *Session) Start() {
+	s.ResponsiveURLs = make(map[string]ResponsiveURL)
 	s.initStats()
 	s.initLogger()
 	s.initPorts()
@@ -101,6 +117,34 @@ func (s *Session) Start() {
 
 func (s *Session) End() {
 	s.Stats.FinishedAt = time.Now()
+}
+
+func (s *Session) AddResponsiveURL(url string) {
+	s.Lock()
+	defer s.Unlock()
+	if _, ok := s.ResponsiveURLs[url]; ok {
+		return
+	}
+	s.ResponsiveURLs[url] = ResponsiveURL{URL: url}
+}
+
+func (s *Session) AddTagToResponsiveURL(url string, tag string) {
+	s.Lock()
+	defer s.Unlock()
+	if u, ok := s.ResponsiveURLs[url]; ok {
+		u.Tags = append(u.Tags, Tag{Text: tag})
+	}
+}
+
+func (s *Session) AddNoteToResponsiveURL(url string, text string, noteType string) {
+	s.Lock()
+	defer s.Unlock()
+	if u, ok := s.ResponsiveURLs[url]; ok {
+		u.Notes = append(u.Notes, Note{
+			Text: text,
+			Type: noteType,
+		})
+	}
 }
 
 func (s *Session) initStats() {
@@ -194,12 +238,6 @@ func (s *Session) ReadFile(p string) ([]byte, error) {
 		return content, err
 	}
 	return content, nil
-}
-
-func (s *Session) AddResponsiveURL(url string) {
-	s.Lock()
-	defer s.Unlock()
-	s.ResponsiveURLs = append(s.ResponsiveURLs, url)
 }
 
 func NewSession() (*Session, error) {

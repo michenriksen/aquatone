@@ -110,16 +110,16 @@ func main() {
 
 	sess.Out.Important("\nClustering similar sites...")
 	pageStructures := make(map[string][]string)
-	var pageClusters [][]string
+	var pageClusters [][]core.ResponsiveURL
 
 	for _, responsiveURL := range sess.ResponsiveURLs {
-		filename := sess.GetFilePath(fmt.Sprintf("html/%s.html", agents.BaseFilenameFromURL(responsiveURL)))
+		filename := sess.GetFilePath(fmt.Sprintf("html/%s.html", agents.BaseFilenameFromURL(responsiveURL.URL)))
 		body, err := os.Open(filename)
 		if err != nil {
 			continue
 		}
 		structure, _ := core.GetPageStructure(body)
-		pageStructures[responsiveURL] = structure
+		pageStructures[responsiveURL.URL] = structure
 	}
 
 	// Loop over URL and page structure pairs
@@ -130,20 +130,20 @@ func main() {
 			addToCluster := true
 			// Loop over pages in cluster and check if similarity for all are 0.80 or above
 			for _, url2 := range cluster {
-				if core.GetSimilarity(structure, pageStructures[url2]) < 0.80 {
+				if core.GetSimilarity(structure, pageStructures[url2.URL]) < 0.80 {
 					addToCluster = false
 				}
 			}
 			// Add to cluster if similarity between all pages are 0.80 or above
 			if addToCluster {
 				foundCluster = true
-				pageClusters[i] = append(pageClusters[i], url)
+				pageClusters[i] = append(pageClusters[i], sess.ResponsiveURLs[url])
 				break
 			}
 		}
 		// If a cluster was not found for the page, create a new cluster for the page
 		if !foundCluster {
-			pageClusters = append(pageClusters, []string{url})
+			pageClusters = append(pageClusters, []core.ResponsiveURL{sess.ResponsiveURLs[url]})
 		}
 	}
 
