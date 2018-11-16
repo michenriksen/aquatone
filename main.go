@@ -65,6 +65,7 @@ func main() {
 	agents.NewURLRequester().Register(sess)
 	agents.NewURLLogger().Register(sess)
 	agents.NewURLScreenshotter().Register(sess)
+	agents.NewURLTechnologyFingerprinter().Register(sess)
 
 	reader := bufio.NewReader(os.Stdin)
 	var targets []string
@@ -110,7 +111,7 @@ func main() {
 
 	sess.Out.Important("\nClustering similar sites...")
 	pageStructures := make(map[string][]string)
-	var pageClusters [][]core.ResponsiveURL
+	var pageClusters [][]*core.ResponsiveURL
 
 	for _, responsiveURL := range sess.ResponsiveURLs {
 		filename := sess.GetFilePath(fmt.Sprintf("html/%s.html", agents.BaseFilenameFromURL(responsiveURL.URL)))
@@ -143,7 +144,7 @@ func main() {
 		}
 		// If a cluster was not found for the page, create a new cluster for the page
 		if !foundCluster {
-			pageClusters = append(pageClusters, []core.ResponsiveURL{sess.ResponsiveURLs[url]})
+			pageClusters = append(pageClusters, []*core.ResponsiveURL{sess.ResponsiveURLs[url]})
 		}
 	}
 

@@ -2,6 +2,18 @@
 
 
 [[projects]]
+  name = "github.com/PuerkitoBio/goquery"
+  packages = ["."]
+  revision = "dc2ec5c7ca4d9aae063b79b9f581dd3ea6afd2b2"
+  version = "v1.4.1"
+
+[[projects]]
+  name = "github.com/andybalholm/cascadia"
+  packages = ["."]
+  revision = "901648c87902174f774fac311d7f176f8647bdaa"
+  version = "v1.0.0"
+
+[[projects]]
   branch = "master"
   name = "github.com/asaskevich/EventBus"
   packages = ["."]
@@ -108,6 +120,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "190885f6a1ee69d745b9b7f2825613807a7cdb94c5b2cdce325d0ae39ccb4706"
+  inputs-digest = "bc7ea67d5b23095f5e7eadde59542e6c8b1e7dacf8e363bd681fedab96027949"
   solver-name = "gps-cdcl"
   solver-version = 1

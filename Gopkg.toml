@@ -60,3 +60,7 @@
 [[constraint]]
   branch = "master"
   name = "github.com/lair-framework/go-nmap"
+
+[[constraint]]
+  name = "github.com/PuerkitoBio/goquery"
+  version = "1.4.1"

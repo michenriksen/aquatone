@@ -79,6 +79,15 @@ func (s *Stats) IncrementScreenshotFailed() {
 
 type Tag struct {
 	Text string
+	Type string
+	Link string
+}
+
+func (t *Tag) HasLink() bool {
+	if t.Link != "" {
+		return true
+	}
+	return false
 }
 
 type Note struct {
@@ -92,20 +101,28 @@ type ResponsiveURL struct {
 	Notes []Note
 }
 
+func (u *ResponsiveURL) AddTag(t Tag) {
+	u.Tags = append(u.Tags, t)
+}
+
+func (u *ResponsiveURL) AddNote(n Note) {
+	u.Notes = append(u.Notes, n)
+}
+
 type Session struct {
 	sync.Mutex
 	Version        string
 	Options        Options `json:"-"`
 	Out            *Logger `json:"-"`
 	Stats          *Stats
-	ResponsiveURLs map[string]ResponsiveURL
+	ResponsiveURLs map[string]*ResponsiveURL
 	Ports          []int
 	EventBus       EventBus.Bus                  `json:"-"`
 	WaitGroup      sizedwaitgroup.SizedWaitGroup `json:"-"`
 }
 
 func (s *Session) Start() {
-	s.ResponsiveURLs = make(map[string]ResponsiveURL)
+	s.ResponsiveURLs = make(map[string]*ResponsiveURL)
 	s.initStats()
 	s.initLogger()
 	s.initPorts()
@@ -125,14 +142,18 @@ func (s *Session) AddResponsiveURL(url string) {
 	if _, ok := s.ResponsiveURLs[url]; ok {
 		return
 	}
-	s.ResponsiveURLs[url] = ResponsiveURL{URL: url}
+	s.ResponsiveURLs[url] = &ResponsiveURL{URL: url}
 }
 
-func (s *Session) AddTagToResponsiveURL(url string, tag string) {
+func (s *Session) AddTagToResponsiveURL(url string, t string, tagType string, link string) {
 	s.Lock()
 	defer s.Unlock()
 	if u, ok := s.ResponsiveURLs[url]; ok {
-		u.Tags = append(u.Tags, Tag{Text: tag})
+		u.AddTag(Tag{
+			Text: t,
+			Type: tagType,
+			Link: link,
+		})
 	}
 }
 
@@ -140,7 +161,7 @@ func (s *Session) AddNoteToResponsiveURL(url string, text string, noteType strin
 	s.Lock()
 	defer s.Unlock()
 	if u, ok := s.ResponsiveURLs[url]; ok {
-		u.Notes = append(u.Notes, Note{
+		u.AddNote(Note{
 			Text: text,
 			Type: noteType,
 		})
@@ -238,6 +259,10 @@ func (s *Session) ReadFile(p string) ([]byte, error) {
 		return content, err
 	}
 	return content, nil
+}
+
+func (s *Session) Asset(name string) ([]byte, error) {
+	return Asset(name)
 }
 
 func NewSession() (*Session, error) {

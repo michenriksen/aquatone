@@ -65,6 +65,8 @@ type Page struct {
 	BodyPath       string
 	ScreenshotPath string
 	HasScreenshot  bool
+	Tags           []Tag
+	Notes          []Note
 }
 
 const (
@@ -79,6 +81,10 @@ const (
 		<style type="text/css">
 			a {
 				color: rgb(52, 152, 219) !important;
+			}
+
+			a.badge {
+				color: inherit !important;
 			}
 
 			footer {
@@ -120,6 +126,10 @@ const (
 				overflow: hidden;
 				box-shadow: 10px 10px 8px rgb(24, 24, 24);
 			}
+
+			.page .card-text {
+        white-space: normal;
+      }
 
 			.page .screenshot-container {
 			  position: relative;
@@ -182,6 +192,15 @@ const (
 						<div class="card-body">
 							<h5 class="card-title">{{.URL}}</h5>
 							<h6 class="card-subtitle text-muted">{{.Status}}</h6>
+							<p class="card-text">
+								{{range .Tags}}
+									{{if .HasLink}}
+										<a href="{{.Link}}" target="_blank" class="badge badge-pill badge-{{.Type}}">{{.Text}}</a>
+									{{else}}
+										<span class="badge badge-pill badge-{{.Type}}">{{.Text}}</span>
+									{{end}}
+								{{end}}
+							</p>
 						</div>
 						{{if .HasScreenshot}}
 							<div class="screenshot-container">
@@ -304,7 +323,7 @@ func NewReport(data ReportData) *Report {
 	}
 }
 
-func NewCluster(urls []ResponsiveURL, session *Session) ([]Page, error) {
+func NewCluster(urls []*ResponsiveURL, session *Session) ([]Page, error) {
 	var cluster []Page
 	for _, url := range urls {
 		page, err := NewPage(url, session)
@@ -317,13 +336,15 @@ func NewCluster(urls []ResponsiveURL, session *Session) ([]Page, error) {
 	return cluster, nil
 }
 
-func NewPage(url ResponsiveURL, session *Session) (Page, error) {
+func NewPage(url *ResponsiveURL, session *Session) (Page, error) {
 	baseFilename := session.BaseFilenameFromURL(url.URL)
 	page := Page{
 		URL:            url.URL,
 		HeadersPath:    fmt.Sprintf("headers/%s.txt", baseFilename),
 		BodyPath:       fmt.Sprintf("html/%s.html", baseFilename),
 		ScreenshotPath: fmt.Sprintf("screenshots/%s.png", baseFilename),
+		Tags:           url.Tags,
+		Notes:          url.Notes,
 	}
 	contents, err := session.ReadFile(fmt.Sprintf("headers/%s.txt", baseFilename))
 	if err != nil {
