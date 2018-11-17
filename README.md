@@ -126,3 +126,8 @@ There are plenty of other DNS enumeration tools out there and Aquatone should wo
 Aquatone can make a report on hosts scanned with the [Nmap](https://nmap.org/) or [Masscan](https://github.com/robertdavidgraham/masscan) portscanner. Simply feed Aquatone the XML output and give it the `-nmap` flag to tell it to parse the input as Nmap/Masscan XML:
 
     $ cat scan.xml | aquatone -nmap
+
+### Credits
+
+- Thanks to [EdOverflow](https://twitter.com/EdOverflow) for the [can-i-take-over-xyz](https://github.com/EdOverflow/can-i-take-over-xyz/) project which Aquatone's domain takeover capability is based on.
+- Thanks to [Elbert Alias](https://github.com/AliasIO) for the [Wappalyzer](https://github.com/AliasIO/Wappalyzer) project's technology fingerprints which Aquatone's technology fingerprinting capability is based on.
