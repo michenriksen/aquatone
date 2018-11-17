@@ -33,8 +33,16 @@ func (a *URLRequester) OnURL(url string) {
 	a.session.WaitGroup.Add()
 	go func(url string) {
 		defer a.session.WaitGroup.Done()
+		// patch: the Set()s will be ignored if declared in a New() call:
+		//        they need to be defined along with the Get()
 		http := Gorequest(a.session.Options)
-		resp, _, errs := http.Get(url).End()
+		resp, _, errs := http.Get(url).
+			Set("User-Agent", RandomUserAgent()).
+			Set("X-Forwarded-For", RandomIPv4Address()).
+			Set("Via", fmt.Sprintf("1.1 %s", RandomIPv4Address())).
+			Set("Forwarded", fmt.Sprintf("for=%s;proto=http;by=%s", RandomIPv4Address(), RandomIPv4Address())).
+			End()
+
 		var status string
 		if errs != nil {
 			a.session.Stats.IncrementRequestFailed()

@@ -9,9 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/michenriksen/aquatone/core"
-
 	"github.com/fatih/color"
+	"github.com/michenriksen/aquatone/core"
 	"github.com/parnurzeal/gorequest"
 )
 
@@ -91,16 +90,13 @@ func URLEscape(s string) string {
 	return url.QueryEscape(s)
 }
 
+// patch: the "Set()" calls must be done in the client, not in the New()
 func Gorequest(o core.Options) *gorequest.SuperAgent {
 	return gorequest.New().
 		Proxy(*o.Proxy).
-		Timeout(time.Duration(*o.HTTPTimeout)*time.Millisecond).
+		Timeout(time.Duration(*o.HTTPTimeout) * time.Millisecond).
 		SetDebug(*o.Debug).
-		TLSClientConfig(&tls.Config{InsecureSkipVerify: true}).
-		Set("User-Agent", RandomUserAgent()).
-		Set("X-Forwarded-For", RandomIPv4Address()).
-		Set("Via", fmt.Sprintf("1.1 %s", RandomIPv4Address())).
-		Set("Forwarded", fmt.Sprintf("for=%s;proto=http;by=%s", RandomIPv4Address(), RandomIPv4Address()))
+		TLSClientConfig(&tls.Config{InsecureSkipVerify: true})
 }
 
 func BaseFilenameFromURL(s string) string {
