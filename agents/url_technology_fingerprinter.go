@@ -162,8 +162,7 @@ func (a *URLTechnologyFingerprinter) fingerprintHeaders(url string) []Fingerprin
 				if name != split[0] {
 					continue
 				}
-				matches := pattern.Regexp.FindAllStringSubmatch(split[1], -1)
-				if matches != nil {
+				if pattern.Regexp.MatchString(split[1]) {
 					a.session.Out.Debug("[%s] Identified technology %s on %s from %s response header\n", a.ID(), fingerprint.Name, url, split[0])
 					technologies = append(technologies, fingerprint)
 				}
@@ -194,8 +193,7 @@ func (a *URLTechnologyFingerprinter) fingerprintBody(url string) []Fingerprint {
 
 	for _, fingerprint := range a.fingerprints {
 		for _, pattern := range fingerprint.HTMLFingerprints {
-			matches := pattern.Regexp.FindAllStringSubmatch(strBody, -1)
-			if matches != nil {
+			if pattern.Regexp.MatchString(strBody) {
 				a.session.Out.Debug("[%s] Identified technology %s on %s from HTML\n", a.ID(), fingerprint.Name, url)
 				technologies = append(technologies, fingerprint)
 			}
@@ -204,8 +202,7 @@ func (a *URLTechnologyFingerprinter) fingerprintBody(url string) []Fingerprint {
 		for _, pattern := range fingerprint.ScriptFingerprints {
 			scripts.Each(func(i int, s *goquery.Selection) {
 				if script, exists := s.Attr("src"); exists {
-					matches := pattern.Regexp.FindAllStringSubmatch(script, -1)
-					if matches != nil {
+					if pattern.Regexp.MatchString(script) {
 						a.session.Out.Debug("[%s] Identified technology %s on %s from script tag\n", a.ID(), fingerprint.Name, url)
 						technologies = append(technologies, fingerprint)
 					}
@@ -217,8 +214,7 @@ func (a *URLTechnologyFingerprinter) fingerprintBody(url string) []Fingerprint {
 			meta.Each(func(i int, s *goquery.Selection) {
 				if n, _ := s.Attr("name"); n == name {
 					content, _ := s.Attr("content")
-					matches := pattern.Regexp.FindAllStringSubmatch(content, -1)
-					if matches != nil {
+					if pattern.Regexp.MatchString(content) {
 						a.session.Out.Debug("[%s] Identified technology %s on %s from meta tag\n", a.ID(), fingerprint.Name, url)
 						technologies = append(technologies, fingerprint)
 					}
