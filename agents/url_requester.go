@@ -38,9 +38,13 @@ func (a *URLRequester) OnURL(url string) {
 		http := Gorequest(a.session.Options)
 		resp, _, errs := http.Get(url).
 			Set("User-Agent", RandomUserAgent()).
-			Set("X-Forwarded-For", RandomIPv4Address()).
-			Set("Via", fmt.Sprintf("1.1 %s", RandomIPv4Address())).
-			Set("Forwarded", fmt.Sprintf("for=%s;proto=http;by=%s", RandomIPv4Address(), RandomIPv4Address())).
+			Set("X-Client-IP", "127.0.0.1").
+			Set("X-Remote-IP", "127.0.0.1").
+			Set("X-Remote-Addr", "127.0.0.1").
+			Set("X-Forwarded-For", "127.0.0.1").
+			Set("X-OriginatingIP", "127.0.0.1").
+			Set("Via", "1.1 127.0.0.1").
+			Set("Forwarded", "for=127.0.0.1;proto=http;by=127.0.0.1").
 			End()
 
 		var status string
