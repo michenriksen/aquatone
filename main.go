@@ -114,6 +114,8 @@ func main() {
 	pageStructures := make(map[string][]string)
 	var pageClusters [][]*core.ResponsiveURL
 
+	// patch: dump alive hosts to file, 1
+	f, _ := os.OpenFile(sess.GetFilePath(*sess.Options.OutFile), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	for _, responsiveURL := range sess.ResponsiveURLs {
 		filename := sess.GetFilePath(fmt.Sprintf("html/%s.html", agents.BaseFilenameFromURL(responsiveURL.URL)))
 		body, err := os.Open(filename)
@@ -122,7 +124,11 @@ func main() {
 		}
 		structure, _ := core.GetPageStructure(body)
 		pageStructures[responsiveURL.URL] = structure
+		// patch: dump alive hosts to file, 2
+		f.WriteString(responsiveURL.URL + "/\n")
 	}
+	// patch: dump alive hosts to file, 3
+	f.Close()
 
 	// Loop over URL and page structure pairs
 	for url, structure := range pageStructures {
@@ -166,7 +172,7 @@ func main() {
 	}
 
 	report := core.NewReport(reportData)
-	f, err := os.OpenFile(sess.GetFilePath("aquatone_report.html"), os.O_RDWR|os.O_CREATE, 0644)
+	f, err = os.OpenFile(sess.GetFilePath("aquatone_report.html"), os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
 		sess.Out.Fatal("Error during report generation: %s\n", err)
 		os.Exit(1)
