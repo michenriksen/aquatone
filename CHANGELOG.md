@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.1]
+
+### Changed
+- List of User-Agents have been updated with most recent list of common User-Agents
+
+### Fixed
+- Random User-Agent and other spoofing request headers were not set correctly when requesting URLs. Thanks to [eur0pa](https://github.com/eur0pa) for pointing it out!
+
 ## [1.4.0]
 
 ### Added
@@ -25,6 +33,7 @@ Complete rewrite and simplification of Aquatone. Now written in Go and focused o
 - Domain discovery (`aquatone-discover`)
 - Domain takeover discovery (`aquatone-takeover`)
 
-[Unreleased]: https://github.com/michenriksen/aquatone/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/michenriksen/aquatone/compare/v1.4.1...HEAD
+[1.4.1]: https://github.com/michenriksen/aquatone/compare/v1.4.0...1.4.1
 [1.4.0]: https://github.com/michenriksen/aquatone/compare/v1.3.2...1.4.0
 [1.3.2]: https://github.com/michenriksen/aquatone/compare/v1.3.2
