@@ -108,44 +108,10 @@ func (a *URLScreenshotter) screenshotURL(s string) {
 	defer c.Release()
 
 	// screenshot buffer
-	var picbuf []byte
-
-	// set headers
-	ip := RandomIPv4Address()
-	if *a.session.Options.Waf {
-		ip = "127.0.0.1"
-	}
-	headers := map[string]interface{}{
-		"X-Client-IP":     ip,
-		"X-Remote-IP":     ip,
-		"X-Remote-Addr":   ip,
-		"X-Forwarded-For": ip,
-		"X-OriginatingIP": ip,
-		"Via":             "1.1 " + ip,
-		"Forwarded":       "for=" + ip + ";proto=http;by=" + ip,
-	}
-
-	// create a new tab and snap it
-	t := chromedp.Tasks{
-		network.Enable(),
-		network.SetExtraHTTPHeaders(network.Headers(headers)),
-		security.SetIgnoreCertificateErrors(true),
-		chromedp.Navigate(s),
-		chromedp.Sleep(time.Second * 5),
-		chromedp.ActionFunc(func(ctxt context.Context, h cdp.Executor) error {
-			picbuf, err = page.CaptureScreenshot().Do(ctxt, h)
-			if err != nil {
-				a.session.Out.Debug("[%s] Error: %v\n", a.ID(), err)
-				a.session.Stats.IncrementScreenshotFailed()
-				a.session.Out.Error("%s: screenshot failed: %s\n", s, err)
-				return err
-			}
-			return nil
-		}),
-	}
+	var buf []byte
 
 	// run tasks
-	err = c.Run(a.ctxt, t)
+	err = c.Run(a.ctxt, a.screenshot(s, &buf))
 	if err != nil {
 		a.session.Out.Debug("[%s] Error: %v\n", a.ID(), err)
 		a.session.Stats.IncrementScreenshotFailed()
@@ -154,7 +120,7 @@ func (a *URLScreenshotter) screenshotURL(s string) {
 	}
 
 	// write to disk
-	err = ioutil.WriteFile(filePath, picbuf, 0644)
+	err = ioutil.WriteFile(filePath, buf, 0644)
 	if err != nil {
 		a.session.Out.Debug("[%s] Error: %v\n", a.ID(), err)
 		a.session.Stats.IncrementScreenshotFailed()
@@ -176,4 +142,42 @@ func (a *URLScreenshotter) screenshotURL(s string) {
 
 	a.session.Stats.IncrementScreenshotSuccessful()
 	a.session.Out.Info("%s: %s\n", s, Green("screenshot successful"))
+}
+
+func (a *URLScreenshotter) screenshot(url string, picbuf *[]byte) chromedp.Action {
+	// set headers
+	ip := RandomIPv4Address()
+
+	if *a.session.Options.Waf {
+		ip = "127.0.0.1"
+	}
+
+	headers := map[string]interface{}{
+		"X-Client-IP":     ip,
+		"X-Remote-IP":     ip,
+		"X-Remote-Addr":   ip,
+		"X-Forwarded-For": ip,
+		"X-OriginatingIP": ip,
+		"Via":             "1.1 " + ip,
+		"Forwarded":       "for=" + ip + ";proto=http;by=" + ip,
+	}
+
+	return chromedp.Tasks{
+		network.Enable(),
+		network.SetExtraHTTPHeaders(network.Headers(headers)),
+		security.SetIgnoreCertificateErrors(true),
+		chromedp.Navigate(url),
+		chromedp.Sleep(time.Second * 5),
+		chromedp.ActionFunc(func(ctxt context.Context, h cdp.Executor) error {
+			buf, err := page.CaptureScreenshot().Do(ctxt, h)
+			if err != nil {
+				a.session.Out.Debug("[%s] Error: %v\n", a.ID(), err)
+				a.session.Stats.IncrementScreenshotFailed()
+				a.session.Out.Error("%s: screenshot failed: %s\n", url, err)
+				return err
+			}
+			*picbuf = buf
+			return nil
+		}),
+	}
 }
