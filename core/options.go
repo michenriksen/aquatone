@@ -9,6 +9,7 @@ import (
 type Options struct {
 	Threads           *int
 	OutDir            *string
+	OutFile           *string
 	Proxy             *string
 	ChromePath        *string
 	Resolution        *string
@@ -26,6 +27,7 @@ func ParseOptions() (Options, error) {
 	options := Options{
 		Threads:           flag.Int("threads", 0, "Number of concurrent threads (default number of logical CPUs)"),
 		OutDir:            flag.String("out", ".", "Directory to write files to"),
+		OutFile:           flag.String("outf", "aquatone_urls.txt", "File to dump alive hosts to"),
 		Proxy:             flag.String("proxy", "", "Proxy to use for HTTP requests"),
 		ChromePath:        flag.String("chrome-path", "", "Full path to the Chrome/Chromium executable to use. By default, aquatone will search for Chrome or Chromium"),
 		Resolution:        flag.String("resolution", "1440,900", "screenshot resolution"),
