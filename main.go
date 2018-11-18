@@ -126,7 +126,7 @@ func main() {
 		structure, _ := core.GetPageStructure(body)
 		pageStructures[responsiveURL.URL] = structure
 		// save alive hosts, 2
-		f.WriteString(responsiveURL.URL + "/\n")
+		f.WriteString(responsiveURL.URL + "\n")
 	}
 	// save alive hosts, 3
 	f.Close()
