@@ -35,7 +35,7 @@ func (a *URLRequester) OnURL(url string) {
 		defer a.session.WaitGroup.Done()
 		http := Gorequest(a.session.Options)
 		ip := RandomIPv4Address()
-		if a.Session.Options.Waf {
+		if *a.session.Options.Waf {
 			ip = "127.0.0.1"
 		}
 		resp, _, errs := http.Get(url).
