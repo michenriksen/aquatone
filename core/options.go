@@ -18,6 +18,7 @@ type Options struct {
 	ScreenshotTimeout *int
 	Nmap              *bool
 	SaveBody          *bool
+	Waf               *bool
 	Silent            *bool
 	Debug             *bool
 }
@@ -35,6 +36,7 @@ func ParseOptions() (Options, error) {
 		ScreenshotTimeout: flag.Int("screenshot-timeout", 30*1000, "Timeout in miliseconds for screenshots"),
 		Nmap:              flag.Bool("nmap", false, "Parse input as Nmap/Masscan XML"),
 		SaveBody:          flag.Bool("save-body", true, "Save response bodies to files"),
+		Waf:               flag.Bool("waf", false, "Attempt to bypass weak ACLs"),
 		Silent:            flag.Bool("silent", false, "Suppress all output except for errors"),
 		Debug:             flag.Bool("debug", false, "Print debugging information"),
 	}
