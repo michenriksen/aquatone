@@ -102,10 +102,15 @@ func (a *URLScreenshotter) screenshotURL(s string) {
 		runner.Flag("hide-scrollbars", true),
 		runner.Flag("window-size", *a.session.Options.Resolution),
 		runner.Flag("user-agent", RandomUserAgent()),
+		runner.Flag("no-sandbox", true),
 		runner.Flag("mute-audio", true),
 		runner.Flag("incognito", true),
 	)
 	defer c.Release()
+	if err != nil {
+		a.session.Out.Error("%s: screenshot failed: %s\n", s, err)
+		return
+	}
 
 	// screenshot buffer
 	var buf []byte
