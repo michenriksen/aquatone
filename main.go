@@ -114,8 +114,7 @@ func main() {
 	pageStructures := make(map[string][]string)
 	var pageClusters [][]*core.ResponsiveURL
 
-	// save alive hosts, 1
-	f, _ := os.OpenFile(sess.GetFilePath(*sess.Options.OutFile), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	f, _ := os.OpenFile(sess.GetFilePath("aquatone_urls.txt"), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 
 	for _, responsiveURL := range sess.ResponsiveURLs {
 		filename := sess.GetFilePath(fmt.Sprintf("html/%s.html", agents.BaseFilenameFromURL(responsiveURL.URL)))
@@ -125,10 +124,8 @@ func main() {
 		}
 		structure, _ := core.GetPageStructure(body)
 		pageStructures[responsiveURL.URL] = structure
-		// save alive hosts, 2
 		f.WriteString(responsiveURL.URL + "\n")
 	}
-	// save alive hosts, 3
 	f.Close()
 
 	// Loop over URL and page structure pairs
