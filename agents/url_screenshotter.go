@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -73,6 +75,23 @@ func (a *URLScreenshotter) locateChrome() {
 
 	if strings.Contains(strings.ToLower(a.chromePath), "chrome") {
 		a.session.Out.Warn("Using unreliable Google Chrome for screenshots. Install Chromium for better results.\n\n")
+	} else {
+		out, err := exec.Command(a.chromePath, "--version").Output()
+		if err != nil {
+			a.session.Out.Warn("An error occurred while trying to determine version of Chromium.\n\n")
+			return
+		}
+		version := string(out)
+		re := regexp.MustCompile(`(\d+)\.`)
+		match := re.FindStringSubmatch(version)
+		if len(match) <= 0 {
+			a.session.Out.Warn("Unable to determine version of Chromium. Screenshotting might be unreliable.\n\n")
+			return
+		}
+		majorVersion, _ := strconv.Atoi(match[1])
+		if majorVersion < 72 {
+			a.session.Out.Warn("An older version of Chromium is installed. Screenshotting of HTTPS URLs might be unreliable.\n\n")
+		}
 	}
 
 	a.session.Out.Debug("[%s] Located Chrome/Chromium binary at %s\n", a.ID(), a.chromePath)
