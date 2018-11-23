@@ -107,6 +107,7 @@ func main() {
 		}
 	}
 
+	time.Sleep(1 * time.Second)
 	sess.EventBus.WaitAsync()
 	sess.WaitGroup.Wait()
 
