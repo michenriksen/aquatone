@@ -36,9 +36,9 @@ func (a *URLScreenshotter) Register(s *core.Session) error {
 
 func (a *URLScreenshotter) OnURLResponsive(url string) {
 	a.session.Out.Debug("[%s] Received new responsive URL %s\n", a.ID(), url)
-	a.session.WaitGroup.Add()
+	a.session.WaitGroup2.Add()
 	go func(url string) {
-		defer a.session.WaitGroup.Done()
+		defer a.session.WaitGroup2.Done()
 		a.screenshotURL(url)
 	}(url)
 }

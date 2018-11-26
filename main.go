@@ -109,6 +109,7 @@ func main() {
 
 	time.Sleep(1 * time.Second)
 	sess.EventBus.WaitAsync()
+	sess.WaitGroup2.Wait()
 	sess.WaitGroup.Wait()
 
 	sess.Out.Important("\nClustering similar sites...")
