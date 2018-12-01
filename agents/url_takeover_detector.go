@@ -162,6 +162,7 @@ func (a *URLTakeoverDetector) detectGithubPages(u string, addrs []string, cname 
 				for _, fingerprint := range fingerprints {
 					if strings.Contains(body, fingerprint) {
 						a.session.AddTagToResponsiveURL(u, "Domain Takeover", "danger", "https://help.github.com/articles/using-a-custom-domain-with-github-pages/")
+						a.session.Out.Warn("%s: vulnerable to takeover on Github Pages\n", u)
 						return true
 					}
 				}
@@ -180,6 +181,7 @@ func (a *URLTakeoverDetector) detectAmazonS3(u string, addrs []string, cname str
 	for _, fingerprint := range fingerprints {
 		if strings.Contains(body, fingerprint) {
 			a.session.AddTagToResponsiveURL(u, "Domain Takeover", "danger", "https://docs.aws.amazon.com/AmazonS3/latest/dev/website-hosting-custom-domain-walkthrough.html")
+			a.session.Out.Warn("%s: vulnerable to takeover on Amazon S3\n", u)
 			return true
 		}
 	}
@@ -193,6 +195,7 @@ func (a *URLTakeoverDetector) detectCampaignMonitor(u string, addrs []string, cn
 	a.session.AddTagToResponsiveURL(u, "Campaign Monitor", "info", "https://www.campaignmonitor.com/")
 	if strings.Contains(body, "Double check the URL or ") {
 		a.session.AddTagToResponsiveURL(u, "Domain Takeover", "danger", "https://help.campaignmonitor.com/custom-domain-names")
+		a.session.Out.Warn("%s: vulnerable to takeover on Campaign Monitor\n", u)
 		return true
 	}
 	return true
@@ -205,6 +208,7 @@ func (a *URLTakeoverDetector) detectCargoCollective(u string, addrs []string, cn
 	a.session.AddTagToResponsiveURL(u, "Cargo Collective", "info", "https://cargocollective.com/")
 	if strings.Contains(body, "404 Not Found") {
 		a.session.AddTagToResponsiveURL(u, "Domain Takeover", "danger", "https://support.2.cargocollective.com/Using-a-Third-Party-Domain")
+		a.session.Out.Warn("%s: vulnerable to takeover on Cargo Collective\n", u)
 		return true
 	}
 	return true
@@ -217,6 +221,7 @@ func (a *URLTakeoverDetector) detectFeedPress(u string, addrs []string, cname st
 	a.session.AddTagToResponsiveURL(u, "FeedPress", "info", "https://feed.press/")
 	if strings.Contains(body, "The feed has not been found.") {
 		a.session.AddTagToResponsiveURL(u, "Domain Takeover", "danger", "https://support.feed.press/article/61-how-to-create-a-custom-hostname")
+		a.session.Out.Warn("%s: vulnerable to takeover on FeedPress\n", u)
 		return true
 	}
 	return true
@@ -228,6 +233,7 @@ func (a *URLTakeoverDetector) detectGhost(u string, addrs []string, cname string
 	}
 	if strings.Contains(body, "The thing you were looking for is no longer here, or never was") {
 		a.session.AddTagToResponsiveURL(u, "Domain Takeover", "danger", "https://docs.ghost.org/faq/using-custom-domains/")
+		a.session.Out.Warn("%s: vulnerable to takeover on Ghost\n", u)
 		return true
 	}
 	return true
@@ -240,6 +246,7 @@ func (a *URLTakeoverDetector) detectHelpjuice(u string, addrs []string, cname st
 	a.session.AddTagToResponsiveURL(u, "Helpjuice", "info", "https://helpjuice.com/")
 	if strings.Contains(body, "We could not find what you're looking for.") {
 		a.session.AddTagToResponsiveURL(u, "Domain Takeover", "danger", "https://help.helpjuice.com/34339-getting-started/custom-domain")
+		a.session.Out.Warn("%s: vulnerable to takeover on Helpjuice\n", u)
 		return true
 	}
 	return false
@@ -252,6 +259,7 @@ func (a *URLTakeoverDetector) detectHelpScout(u string, addrs []string, cname st
 	a.session.AddTagToResponsiveURL(u, "HelpScout", "info", "https://www.helpscout.net/")
 	if strings.Contains(body, "No settings were found for this company:") {
 		a.session.AddTagToResponsiveURL(u, "Domain Takeover", "danger", "https://docs.helpscout.net/article/42-setup-custom-domain")
+		a.session.Out.Warn("%s: vulnerable to takeover on HelpScout\n", u)
 		return true
 	}
 	return true
@@ -264,6 +272,7 @@ func (a *URLTakeoverDetector) detectHeroku(u string, addrs []string, cname strin
 			a.session.AddTagToResponsiveURL(u, "Heroku", "info", "https://www.heroku.com/")
 			if strings.Contains(body, "No such app") {
 				a.session.AddTagToResponsiveURL(u, "Domain Takeover", "danger", "https://devcenter.heroku.com/articles/custom-domains")
+				a.session.Out.Warn("%s: vulnerable to takeover on Heroku\n", u)
 				return true
 			}
 			return true
@@ -279,6 +288,7 @@ func (a *URLTakeoverDetector) detectJetBrains(u string, addrs []string, cname st
 	a.session.AddTagToResponsiveURL(u, "JetBrains", "info", "https://www.jetbrains.com/")
 	if strings.Contains(body, "is not a registered InCloud YouTrack") {
 		a.session.AddTagToResponsiveURL(u, "Domain Takeover", "danger", "https://www.jetbrains.com/help/youtrack/incloud/Domain-Settings.html#use-custom-domain-name")
+		a.session.Out.Warn("%s: vulnerable to takeover on JetBrains\n", u)
 		return true
 	}
 	return true
@@ -291,6 +301,7 @@ func (a *URLTakeoverDetector) detectMicrosoftAzure(u string, addrs []string, cna
 	a.session.AddTagToResponsiveURL(u, "Microsoft Azure", "info", "https://azure.microsoft.com/")
 	if strings.Contains(body, "404 Web Site not found") {
 		a.session.AddTagToResponsiveURL(u, "Domain Takeover", "danger", "https://docs.microsoft.com/en-us/azure/app-service/app-service-web-tutorial-custom-domain")
+		a.session.Out.Warn("%s: vulnerable to takeover on Microsoft Azure\n", u)
 		return true
 	}
 	return true
@@ -303,6 +314,7 @@ func (a *URLTakeoverDetector) detectReadme(u string, addrs []string, cname strin
 			a.session.AddTagToResponsiveURL(u, "Readme", "info", "https://readme.io/")
 			if strings.Contains(body, "Project doesnt exist... yet!") {
 				a.session.AddTagToResponsiveURL(u, "Domain Takeover", "danger", "https://readme.readme.io/docs/setting-up-custom-domain")
+				a.session.Out.Warn("%s: vulnerable to takeover on Readme\n", u)
 				return true
 			}
 			return true
@@ -326,6 +338,7 @@ func (a *URLTakeoverDetector) detectSurge(u string, addrs []string, cname string
 		a.session.AddTagToResponsiveURL(u, "Surge", "info", "https://surge.sh/")
 		if strings.Contains(body, "project not found") {
 			a.session.AddTagToResponsiveURL(u, "Domain Takeover", "danger", "https://surge.sh/help/adding-a-custom-domain")
+			a.session.Out.Warn("%s: vulnerable to takeover on Surge\n", u)
 		}
 		return true
 	}
@@ -346,6 +359,7 @@ func (a *URLTakeoverDetector) detectTumblr(u string, addrs []string, cname strin
 	if detected {
 		if strings.Contains(body, "Whatever you were looking for doesn't currently exist at this address") {
 			a.session.AddTagToResponsiveURL(u, "Domain Takeover", "danger", "https://tumblr.zendesk.com/hc/en-us/articles/231256548-Custom-domains")
+			a.session.Out.Warn("%s: vulnerable to takeover on Tumblr\n", u)
 		}
 		return true
 	}
@@ -359,6 +373,7 @@ func (a *URLTakeoverDetector) detectUserVoice(u string, addrs []string, cname st
 	a.session.AddTagToResponsiveURL(u, "UserVoice", "info", "https://www.uservoice.com/")
 	if strings.Contains(body, "This UserVoice subdomain is currently available!") {
 		a.session.AddTagToResponsiveURL(u, "Domain Takeover", "danger", "https://developer.uservoice.com/docs/site/domain-aliasing/")
+		a.session.Out.Warn("%s: vulnerable to takeover on UserVoice\n", u)
 	}
 	return true
 }
@@ -369,6 +384,7 @@ func (a *URLTakeoverDetector) detectWordpress(u string, addrs []string, cname st
 	}
 	if strings.Contains(body, "Do you want to register") {
 		a.session.AddTagToResponsiveURL(u, "Domain Takeover", "danger", "https://en.support.wordpress.com/domains/map-subdomain/")
+		a.session.Out.Warn("%s: vulnerable to takeover on Wordpress\n", u)
 	}
 	return true
 }
@@ -380,6 +396,7 @@ func (a *URLTakeoverDetector) detectSmugMug(u string, addrs []string, cname stri
 	a.session.AddTagToResponsiveURL(u, "SmugMug", "info", "https://www.smugmug.com/")
 	if body == "" {
 		a.session.AddTagToResponsiveURL(u, "Domain Takeover", "danger", "https://help.smugmug.com/use-a-custom-domain-BymMexwJVHG")
+		a.session.Out.Warn("%s: vulnerable to takeover on SmugMug\n", u)
 	}
 	return true
 }
@@ -399,6 +416,7 @@ func (a *URLTakeoverDetector) detectStrikingly(u string, addrs []string, cname s
 		a.session.AddTagToResponsiveURL(u, "Strikingly", "info", "https://www.strikingly.com/")
 		if strings.Contains(body, "But if you're looking to build your own website,") {
 			a.session.AddTagToResponsiveURL(u, "Domain Takeover", "danger", "https://support.strikingly.com/hc/en-us/articles/215046947-Connect-Custom-Domain")
+			a.session.Out.Warn("%s: vulnerable to takeover on Strikingly\n", u)
 		}
 		return true
 	}
@@ -412,6 +430,7 @@ func (a *URLTakeoverDetector) detectUptimeRobot(u string, addrs []string, cname 
 	a.session.AddTagToResponsiveURL(u, "UptimeRobot", "info", "https://uptimerobot.com/")
 	if strings.Contains(body, "This public status page <b>does not seem to exist</b>.") {
 		a.session.AddTagToResponsiveURL(u, "Domain Takeover", "danger", "https://blog.uptimerobot.com/introducing-public-status-pages-yay/")
+		a.session.Out.Warn("%s: vulnerable to takeover on UptimeRobot\n", u)
 	}
 	return true
 }
@@ -423,6 +442,7 @@ func (a *URLTakeoverDetector) detectPantheon(u string, addrs []string, cname str
 	a.session.AddTagToResponsiveURL(u, "Pantheon", "info", "https://pantheon.io/")
 	if strings.Contains(body, "The gods are wise") {
 		a.session.AddTagToResponsiveURL(u, "Domain Takeover", "danger", "https://pantheon.io/docs/domains/")
+		a.session.Out.Warn("%s: vulnerable to takeover on Pantheon\n", u)
 	}
 	return true
 }
