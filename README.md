@@ -60,6 +60,7 @@ IPs, hostnames and domain names in the data will undergo scanning for ports that
 When Aquatone is done processing the target hosts, it has created a bunch of files and folders in the current directory:
 
  - **aquatone_report.html**: An HTML report to open in a browser that displays all the collected screenshots and response headers clustered by similarity.
+ - **aquatone_urls.txt**: A file containing all responsive URLs. Useful for feeding into other tools.
  - **headers/**: A folder with files containing raw response headers from processed targets
  - **html/**: A folder with files containing the raw response bodies from processed targets. If you are processing a large amount of hosts, and don't need this for further analysis, you can disable this with the `-save-body=false` flag to save some disk space.
  - **screenshots/**: A folder with PNG screenshots of the processed targets
