@@ -1,6 +1,7 @@
 package agents
 
 import (
+	"crypto/md5"
 	"crypto/tls"
 	"fmt"
 	"math/rand"
@@ -107,6 +108,10 @@ func BaseFilenameFromURL(s string) string {
 	}
 	host := strings.Replace(u.Host, ":", "__", 1)
 	filename := fmt.Sprintf("%s__%s", u.Scheme, strings.Replace(host, ".", "_", -1))
+	pathAndQuery := u.Path + u.RawQuery
+	if len(pathAndQuery) > 0 {
+		filename = fmt.Sprintf("%s__%x", filename, md5.Sum([]byte(pathAndQuery)))
+	}
 	return strings.ToLower(filename)
 }
 
