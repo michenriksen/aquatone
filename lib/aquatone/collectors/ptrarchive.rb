@@ -8,7 +8,7 @@ module Aquatone
       }
 
       def run
-        response = get_request("http://ptrarchive.com/tools/search.htm?label=#{url_escape(domain.name)}&date=ALL")
+        response = get_request("http://ptrarchive.com/tools/search3.htm?label=#{url_escape(domain.name)}&date=ALL")
         if response.code != 200
           failure("PTRArchive returned unexpected response code: #{response.code}")
         end
