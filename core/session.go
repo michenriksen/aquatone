@@ -192,8 +192,31 @@ func (s *Session) initPorts() {
 		for _, p := range strings.Split(*s.Options.Ports, ",") {
 			port, err := strconv.Atoi(strings.TrimSpace(p))
 			if err != nil {
-				s.Out.Fatal("Invalid port range given\n")
-				os.Exit(1)
+				ranges := strings.Split(p, "-")
+
+				if len(ranges) > 1 {
+					start_port, err := strconv.Atoi(strings.TrimSpace(ranges[0]))
+					if err != nil {
+						s.Out.Fatal("[start port] Invalid port range given")
+						os.Exit(1)
+					}
+
+					end_port, err := strconv.Atoi(strings.TrimSpace(ranges[1]))
+					if err != nil {
+						s.Out.Fatal("[end port] Invalid port range given")
+						os.Exit(1)
+					}
+
+					for i:= start_port; i <= end_port; i++ {
+						if i < 1 || i > 65535 {
+							s.Out.Fatal("Invalid port give: %v\n", i)
+							os.Exit(1)
+						}
+						ports = append(ports, i)
+					}
+
+					continue
+				}
 			}
 			if port < 1 || port > 65535 {
 				s.Out.Fatal("Invalid port given: %v\n", port)
