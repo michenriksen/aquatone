@@ -217,6 +217,9 @@ func (s *Session) initPorts() {
 
 					continue
 				}
+
+				s.Out.Fatal("Invalid port range given\n")
+				os.Exit(1)
 			}
 			if port < 1 || port > 65535 {
 				s.Out.Fatal("Invalid port given: %v\n", port)
