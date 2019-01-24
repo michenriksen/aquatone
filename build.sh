@@ -24,7 +24,7 @@ create_archive() {
   OUTPUT=$1
 
   echo "[*] Creating archive $OUTPUT ..."
-  zip -j "$OUTPUT" aquatone ../README.md ../LICENSE.md > /dev/null
+  zip -j "$OUTPUT" aquatone ../README.md ../LICENSE.txt > /dev/null
   rm -rf aquatone aquatone.exe
 }
 
