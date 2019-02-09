@@ -317,6 +317,15 @@ func (r *Report) Render(dest io.Writer) error {
 	return nil
 }
 
+func (r *Report) RenderJson(dest io.Writer) error {
+	jsonTmpl, err := json.MarshalIndent(r.Data, "", "    ")
+    if err != nil {
+        return err
+	}
+    dest.Write(jsonTmpl)
+	return nil
+}
+
 func NewReport(data ReportData) *Report {
 	return &Report{
 		Data: data,
