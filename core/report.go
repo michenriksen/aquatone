@@ -190,7 +190,8 @@ const (
 				{{range .}}
 					<div class="page card mb-3">
 						<div class="card-body">
-							<h5 class="card-title">{{.URL}}</h5>
+							<h5 class="card-title" style="display: inline-block;">{{.URL}}</h5>
+							<a href="{{.URL}}" target="_blank">↗</a>
 							<h6 class="card-subtitle text-muted">{{.Status}}</h6>
 							<p class="card-text">
 								{{range .Tags}}
