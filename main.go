@@ -96,7 +96,7 @@ func main() {
 	sess.Out.Important("Threads    : %d\n", *sess.Options.Threads)
 	if *sess.Options.Nmap {
 		sess.Out.Important("Ports      : nmap open ports\n")
-	}else{
+	} else {
 		sess.Out.Important("Ports      : %s\n", strings.Trim(strings.Replace(fmt.Sprint(sess.Ports), " ", ", ", -1), "[]"))
 	}
 	sess.Out.Important("Output dir : %s\n\n", *sess.Options.OutDir)

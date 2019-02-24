@@ -26,7 +26,7 @@ type Options struct {
 func ParseOptions() (Options, error) {
 	options := Options{
 		Threads:           flag.Int("threads", 0, "Number of concurrent threads (default number of logical CPUs)"),
-		Timeout:	       flag.Int("timeout", 0, "Generic timeout for everithing. (specific timeouts will be ignored if set)"),
+		Timeout:           flag.Int("timeout", 0, "Generic timeout for everithing. (specific timeouts will be ignored if set)"),
 		OutDir:            flag.String("out", ".", "Directory to write files to"),
 		Proxy:             flag.String("proxy", "", "Proxy to use for HTTP requests"),
 		ChromePath:        flag.String("chrome-path", "", "Full path to the Chrome/Chromium executable to use. By default, aquatone will search for Chrome or Chromium"),
@@ -43,7 +43,7 @@ func ParseOptions() (Options, error) {
 
 	flag.Parse()
 
-	if *options.Timeout != 0{
+	if *options.Timeout != 0 {
 		*options.ScanTimeout = *options.Timeout
 		*options.HTTPTimeout = *options.Timeout
 		*options.ScanTimeout = *options.Timeout

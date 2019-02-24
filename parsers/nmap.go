@@ -49,7 +49,7 @@ func (p *NmapParser) hostToURLs(host nmap.Host) []string {
 	var urls []string
 	for _, port := range host.Ports {
 
-		if port.State.State != "open"{
+		if port.State.State != "open" {
 			continue
 		}
 
