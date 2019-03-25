@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/michenriksen/aquatone/agents"
-	"github.com/michenriksen/aquatone/core"
-	"github.com/michenriksen/aquatone/parsers"
+	"github.com/bberastegui/aquatone/agents"
+	"github.com/bberastegui/aquatone/core"
+	"github.com/bberastegui/aquatone/parsers"
 )
 
 var (

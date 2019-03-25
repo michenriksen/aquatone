@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"strings"
+	"encoding/json"
 )
 
 type Header struct {
