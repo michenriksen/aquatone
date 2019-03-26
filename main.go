@@ -8,9 +8,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/michenriksen/aquatone/agents"
-	"github.com/michenriksen/aquatone/core"
-	"github.com/michenriksen/aquatone/parsers"
+	"github.com/bberastegui/aquatone/agents"
+	"github.com/bberastegui/aquatone/core"
+	"github.com/bberastegui/aquatone/parsers"
 )
 
 var (
@@ -173,12 +173,23 @@ func main() {
 	report := core.NewReport(reportData)
 	f, err = os.OpenFile(sess.GetFilePath("aquatone_report.html"), os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
-		sess.Out.Fatal("Error during report generation: %s\n", err)
+		sess.Out.Fatal("Error during HTML report generation: %s\n", err)
 		os.Exit(1)
 	}
 	err = report.Render(f)
 	if err != nil {
-		sess.Out.Fatal("Error during report generation: %s\n", err)
+		sess.Out.Fatal("Error during HTML report generation: %s\n", err)
+		os.Exit(1)
+	}
+
+	f, err = os.OpenFile(sess.GetFilePath("aquatone_report.json"), os.O_RDWR|os.O_CREATE, 0644)
+	if err != nil {
+		sess.Out.Fatal("Error during JSON report generation: %s\n", err)
+		os.Exit(1)
+	}
+	err = report.RenderJson(f)
+	if err != nil {
+		sess.Out.Fatal("Error during JSON report generation: %s\n", err)
 		os.Exit(1)
 	}
 
@@ -205,4 +216,5 @@ func main() {
 	sess.Out.Info(" - Failed     : %v\n\n", sess.Stats.ScreenshotFailed)
 
 	sess.Out.Important("Wrote HTML report to: %s\n\n", sess.GetFilePath("aquatone_report.html"))
+	sess.Out.Important("Wrote JSON report to: %s\n\n", sess.GetFilePath("aquatone_report.json"))
 }

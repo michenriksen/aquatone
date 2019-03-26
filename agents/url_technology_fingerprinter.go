@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/michenriksen/aquatone/core"
+	"github.com/bberastegui/aquatone/core"
 )
 
 type FingerprintRegexp struct {

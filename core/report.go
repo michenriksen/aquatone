@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"strings"
+	"encoding/json"
 )
 
 type Header struct {
@@ -190,7 +191,8 @@ const (
 				{{range .}}
 					<div class="page card mb-3">
 						<div class="card-body">
-							<h5 class="card-title">{{.URL}}</h5>
+							<h5 class="card-title" style="display: inline-block;">{{.URL}}</h5>
+							<a href="{{.URL}}" target="_blank">↗</a>
 							<h6 class="card-subtitle text-muted">{{.Status}}</h6>
 							<p class="card-text">
 								{{range .Tags}}
@@ -314,6 +316,15 @@ func (r *Report) Render(dest io.Writer) error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func (r *Report) RenderJson(dest io.Writer) error {
+	jsonTmpl, err := json.MarshalIndent(r.Data, "", "    ")
+    if err != nil {
+        return err
+	}
+    dest.Write(jsonTmpl)
 	return nil
 }
 

@@ -1,7 +1,7 @@
 package agents
 
 import (
-	"github.com/michenriksen/aquatone/core"
+	"github.com/bberastegui/aquatone/core"
 )
 
 type URLPublisher struct {
