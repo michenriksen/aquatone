@@ -8,10 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Automatic SSL/TLS detection on non-standard ports
+- URL Screenshotter agent now takes extra steps to ensure that the browser process is killed after use
 
 ### Changed
 - Packages and other dependencies have been updated to latest versions
 - User-Agent list has been updated to current most common agents
+- Wappalyzer technology fingerprints have been updated
 
 ## [1.4.3]
 
