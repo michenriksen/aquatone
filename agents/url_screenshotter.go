@@ -22,7 +22,7 @@ func NewURLScreenshotter() *URLScreenshotter {
 	return &URLScreenshotter{}
 }
 
-func (d *URLScreenshotter) ID() string {
+func (a *URLScreenshotter) ID() string {
 	return "agent:url_screenshotter"
 }
 
@@ -126,6 +126,7 @@ func (a *URLScreenshotter) screenshotURL(s string) {
 		a.session.Out.Debug("[%s] Error: %v\n", a.ID(), err)
 		a.session.Stats.IncrementScreenshotFailed()
 		a.session.Out.Error("%s: screenshot failed: %s\n", s, err)
+		a.killChromeProcessIfRunning(cmd)
 		return
 	}
 
@@ -134,13 +135,24 @@ func (a *URLScreenshotter) screenshotURL(s string) {
 		a.session.Out.Debug("[%s] Error: %v\n", a.ID(), err)
 		if ctx.Err() == context.DeadlineExceeded {
 			a.session.Out.Error("%s: screenshot timed out\n", s)
+			a.killChromeProcessIfRunning(cmd)
 			return
 		}
 
 		a.session.Out.Error("%s: screenshot failed: %s\n", s, err)
+		a.killChromeProcessIfRunning(cmd)
 		return
 	}
 
 	a.session.Stats.IncrementScreenshotSuccessful()
 	a.session.Out.Info("%s: %s\n", s, Green("screenshot successful"))
+	a.killChromeProcessIfRunning(cmd)
+}
+
+func (a *URLScreenshotter) killChromeProcessIfRunning(cmd *exec.Cmd) {
+	if cmd.Process == nil {
+		return
+	}
+	cmd.Process.Release()
+	cmd.Process.Kill()
 }
