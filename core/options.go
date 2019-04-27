@@ -20,6 +20,7 @@ type Options struct {
 	SaveBody          *bool
 	Silent            *bool
 	Debug             *bool
+	Version           *bool
 }
 
 func ParseOptions() (Options, error) {
@@ -37,6 +38,7 @@ func ParseOptions() (Options, error) {
 		SaveBody:          flag.Bool("save-body", true, "Save response bodies to files"),
 		Silent:            flag.Bool("silent", false, "Suppress all output except for errors"),
 		Debug:             flag.Bool("debug", false, "Print debugging information"),
+		Version:           flag.Bool("version", false, "Print current Aquatone version"),
 	}
 
 	flag.Parse()

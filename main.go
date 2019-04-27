@@ -46,6 +46,11 @@ func main() {
 		os.Exit(1)
 	}
 
+	if *sess.Options.Version {
+		sess.Out.Info("%s v%s", core.Name, core.Version)
+		os.Exit(0)
+	}
+
 	fi, err := os.Stat(*sess.Options.OutDir)
 
 	if os.IsNotExist(err) {
