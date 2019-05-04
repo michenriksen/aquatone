@@ -99,7 +99,11 @@ func main() {
 
 	sess.Out.Important("Targets    : %d\n", len(targets))
 	sess.Out.Important("Threads    : %d\n", *sess.Options.Threads)
-	sess.Out.Important("Ports      : %s\n", strings.Trim(strings.Replace(fmt.Sprint(sess.Ports), " ", ", ", -1), "[]"))
+	if *sess.Options.Nmap {
+		sess.Out.Important("Ports      : nmap open ports\n")
+	} else {
+		sess.Out.Important("Ports      : %s\n", strings.Trim(strings.Replace(fmt.Sprint(sess.Ports), " ", ", ", -1), "[]"))
+	}
 	sess.Out.Important("Output dir : %s\n\n", *sess.Options.OutDir)
 
 	for _, target := range targets {
