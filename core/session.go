@@ -289,6 +289,11 @@ func NewSession() (*Session, error) {
 		}
 	}
 
+	envOutPath := os.Getenv("AQUATONE_OUT_PATH")
+	if *session.Options.OutDir == "." && envOutPath != "" {
+		session.Options.OutDir = &envOutPath
+	}
+
 	outdir := filepath.Clean(*session.Options.OutDir)
 	session.Options.OutDir = &outdir
 

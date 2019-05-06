@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Support for processing of multiple URLs on the same host by appending hash of URL path and fragment to file names
+- Support for defining default output directory in `AQUATONE_OUT_PATH` environment variable
 
 ## [1.5.0]
 
