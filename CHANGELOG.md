@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.6.0]
+
 ### Fixed
 - The Nmap/Masscan XML report parser did not ignore closed/filtered ports. It now only works on ports with state `open`.
 
@@ -66,7 +68,8 @@ Complete rewrite and simplification of Aquatone. Now written in Go and focused o
 - Domain discovery (`aquatone-discover`)
 - Domain takeover discovery (`aquatone-takeover`)
 
-[Unreleased]: https://github.com/michenriksen/aquatone/compare/v1.5.0...HEAD
+[Unreleased]: https://github.com/michenriksen/aquatone/compare/v1.6.0...HEAD
+[1.6.0]: https://github.com/michenriksen/aquatone/compare/v1.5.0...1.6.0
 [1.5.0]: https://github.com/michenriksen/aquatone/compare/v1.4.3...1.5.0
 [1.4.3]: https://github.com/michenriksen/aquatone/compare/v1.4.2...1.4.3
 [1.4.2]: https://github.com/michenriksen/aquatone/compare/v1.4.1...1.4.2
