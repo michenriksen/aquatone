@@ -17,24 +17,24 @@ If you for some reason don't trust the pre-compiled binaries, you can also compi
 ### Command-line options:
 
 ```
-  -chrome-path string
-        Full path to the Chrome/Chromium executable to use. By default, aquatone will search for Chrome or Chromium
+    -chrome-path string
+    	Full path to the Chrome/Chromium executable to use. By default, aquatone will search for Chrome or Chromium
   -debug
     	Print debugging information
   -http-timeout int
     	Timeout in miliseconds for HTTP requests (default 3000)
   -nmap
-        Parse input as Nmap/Masscan XML
+    	Parse input as Nmap/Masscan XML
   -out string
     	Directory to write files to (default ".")
   -ports string
-        Ports to scan on hosts. Supported list aliases: small, medium, large, xlarge (default "80,443,8000,8080,8443")
+    	Ports to scan on hosts. Supported list aliases: small, medium, large, xlarge (default "80,443,8000,8080,8443")
   -proxy string
     	Proxy to use for HTTP requests
   -resolution string
     	screenshot resolution (default "1440,900")
   -save-body
-        Save response bodies to files (default true)
+    	Save response bodies to files (default true)
   -scan-timeout int
     	Timeout in miliseconds for port scans (default 100)
   -screenshot-timeout int
@@ -43,6 +43,8 @@ If you for some reason don't trust the pre-compiled binaries, you can also compi
     	Suppress all output except for errors
   -threads int
     	Number of concurrent threads (default number of logical CPUs)
+  -version
+    	Print current Aquatone version
 ```
 
 ### Giving Aquatone data
@@ -73,7 +75,9 @@ If you don't want Aquatone to create files in the current working directory, you
 
     $ cat hosts.txt | aquatone -out ~/aquatone/example.com
 
-Note: Aquatone requires that the output destination folder exists.
+It is also possible to set a permanent default output destination by defining an environment variable:
+
+    export AQUATONE_OUT_PATH="~/aquatone"
 
 
 ### Specifying ports to scan
