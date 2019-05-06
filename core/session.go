@@ -1,7 +1,9 @@
 package core
 
 import (
+	"crypto/sha1"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/url"
 	"os"
@@ -244,8 +246,14 @@ func (s *Session) BaseFilenameFromURL(stru string) string {
 	if err != nil {
 		return ""
 	}
+
+	h := sha1.New()
+	io.WriteString(h, u.Path)
+	io.WriteString(h, u.Fragment)
+
+	pathHash := fmt.Sprintf("%x", h.Sum(nil))[0:16]
 	host := strings.Replace(u.Host, ":", "__", 1)
-	filename := fmt.Sprintf("%s__%s", u.Scheme, strings.Replace(host, ".", "_", -1))
+	filename := fmt.Sprintf("%s__%s__%s", u.Scheme, strings.Replace(host, ".", "_", -1), pathHash)
 	return strings.ToLower(filename)
 }
 

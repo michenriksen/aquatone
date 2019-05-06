@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - The Nmap/Masscan XML report parser did not ignore closed/filtered ports. It now only works on ports with state `open`.
 
+### Added
+- Support for processing of multiple URLs on the same host by appending hash of URL path and fragment to file names
+
 ## [1.5.0]
 
 ### Added
