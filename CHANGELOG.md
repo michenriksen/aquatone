@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- The Nmap/Masscan XML report parser did not ignore closed/filtered ports. It now only works on ports with state `open`.
+
 ## [1.5.0]
 
 ### Added

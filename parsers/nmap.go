@@ -48,6 +48,10 @@ func (p *NmapParser) isHTTPPort(port int) bool {
 func (p *NmapParser) hostToURLs(host nmap.Host) []string {
 	var urls []string
 	for _, port := range host.Ports {
+		if port.State.State != "open" {
+			continue
+		}
+
 		var protocol string
 		if port.Service.Name == "ssl" {
 			protocol = "https"
