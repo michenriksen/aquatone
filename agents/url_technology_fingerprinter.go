@@ -118,6 +118,11 @@ func (a *URLTechnologyFingerprinter) OnURLResponsive(url string) {
 	go func(url string) {
 		defer a.session.WaitGroup.Done()
 		seen := make(map[string]struct{})
+		file, _ := os.OpenFile(
+			a.session.GetFilePath(fmt.Sprintf("info/%s.txt", BaseFilenameFromURL(url))),
+			os.O_CREATE|os.O_WRONLY, 0644,
+		)
+		file.WriteString(url + "\n")
 		fingerprints := append(a.fingerprintHeaders(url), a.fingerprintBody(url)...)
 		for _, f := range fingerprints {
 			if _, ok := seen[f.Name]; ok {
@@ -125,6 +130,7 @@ func (a *URLTechnologyFingerprinter) OnURLResponsive(url string) {
 			}
 			seen[f.Name] = struct{}{}
 			a.session.AddTagToResponsiveURL(url, f.Name, "info", f.Website)
+			file.WriteString(f.Name + "|" + f.Website + "\n")
 			for _, impl := range f.Implies {
 				if _, ok := seen[impl]; ok {
 					continue
@@ -133,11 +139,13 @@ func (a *URLTechnologyFingerprinter) OnURLResponsive(url string) {
 				for _, implf := range a.fingerprints {
 					if impl == implf.Name {
 						a.session.AddTagToResponsiveURL(url, implf.Name, "info", implf.Website)
+						file.WriteString(implf.Name + "|" + implf.Website + "\n")
 						break
 					}
 				}
 			}
 		}
+		file.Close()
 	}(url)
 }
 

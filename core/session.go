@@ -229,7 +229,7 @@ func (s *Session) initWaitGroup() {
 }
 
 func (s *Session) initDirectories() {
-	for _, d := range []string{"headers", "html", "screenshots"} {
+	for _, d := range []string{"info", "headers", "html", "screenshots"} {
 		d = s.GetFilePath(d)
 		if _, err := os.Stat(d); os.IsNotExist(err) {
 			err = os.MkdirAll(d, 0755)
