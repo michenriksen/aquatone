@@ -6,6 +6,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.0-beta]
+
+### Added
+- Session data will now be written to output directory as `aquatone_session.json`
+- New `url_hostname_resolver` agent that resolves page's hostnames to IP addresses
+- New `url_page_title_extractor` that extracts HTML page titles from responsive pages
+- New command line flag `-template-path` to specify a custom template to use for the HTML report
+- New command line flag `-session` to load a previous Aquatone session file and generate a report on its data
+- Aquatone is now compiled for ARM64 in `build.sh`
+
+### Changed
+- Bigger refactoring of session and pages
+- **New [Vue.js](https://vuejs.org/) powered HTML report with lots of new cool stuff:**
+   - New look and feel
+   - Pages can now be viewed in different modes:
+      - **By Similarity**: Pages are displayed in clusters by their HTML structure similarity
+      - **By Hostname:** Pages are displayed in clusters by their hostname
+      - **Single Pages:** Pages are shown one-by-one with bigger screenshots and response headers (oldschool Aquatone style)
+   - **[Vis.js](http://visjs.org/) powered network graph view** to see relations between pages, IP addresses and technologies
+   - Page clusters are now rendered in a paginated carousel view instead of horizontally scrollable lanes
+   - Clusters and pages are paginated to improve performance on large reports
+   - Page titles are now shown for pages
+
+### Removed
+- `url_logger` agent (no longer needed)
+
 ## [1.6.0]
 
 ### Fixed
@@ -68,11 +94,12 @@ Complete rewrite and simplification of Aquatone. Now written in Go and focused o
 - Domain discovery (`aquatone-discover`)
 - Domain takeover discovery (`aquatone-takeover`)
 
-[Unreleased]: https://github.com/michenriksen/aquatone/compare/v1.6.0...HEAD
-[1.6.0]: https://github.com/michenriksen/aquatone/compare/v1.5.0...1.6.0
-[1.5.0]: https://github.com/michenriksen/aquatone/compare/v1.4.3...1.5.0
-[1.4.3]: https://github.com/michenriksen/aquatone/compare/v1.4.2...1.4.3
-[1.4.2]: https://github.com/michenriksen/aquatone/compare/v1.4.1...1.4.2
-[1.4.1]: https://github.com/michenriksen/aquatone/compare/v1.4.0...1.4.1
-[1.4.0]: https://github.com/michenriksen/aquatone/compare/v1.3.2...1.4.0
+[Unreleased]: https://github.com/michenriksen/aquatone/compare/v1.7.0-beta...HEAD
+[1.7.0-beta]: https://github.com/michenriksen/aquatone/compare/v1.6.0...v1.7.0-beta
+[1.6.0]: https://github.com/michenriksen/aquatone/compare/v1.5.0...v1.6.0
+[1.5.0]: https://github.com/michenriksen/aquatone/compare/v1.4.3...v1.5.0
+[1.4.3]: https://github.com/michenriksen/aquatone/compare/v1.4.2...v1.4.3
+[1.4.2]: https://github.com/michenriksen/aquatone/compare/v1.4.1...v1.4.2
+[1.4.1]: https://github.com/michenriksen/aquatone/compare/v1.4.0...v1.4.1
+[1.4.0]: https://github.com/michenriksen/aquatone/compare/v1.3.2...v1.4.0
 [1.3.2]: https://github.com/michenriksen/aquatone/compare/v1.3.2
