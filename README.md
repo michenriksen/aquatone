@@ -17,7 +17,7 @@ If you for some reason don't trust the pre-compiled binaries, you can also compi
 ### Command-line options:
 
 ```
-    -chrome-path string
+  -chrome-path string
     	Full path to the Chrome/Chromium executable to use. By default, aquatone will search for Chrome or Chromium
   -debug
     	Print debugging information
@@ -39,8 +39,12 @@ If you for some reason don't trust the pre-compiled binaries, you can also compi
     	Timeout in miliseconds for port scans (default 100)
   -screenshot-timeout int
     	Timeout in miliseconds for screenshots (default 30000)
+  -session string
+    	Load Aquatone session file and generate HTML report
   -silent
     	Suppress all output except for errors
+  -template-path string
+    	Path to HTML template to use for report
   -threads int
     	Number of concurrent threads (default number of logical CPUs)
   -version
@@ -63,6 +67,7 @@ When Aquatone is done processing the target hosts, it has created a bunch of fil
 
  - **aquatone_report.html**: An HTML report to open in a browser that displays all the collected screenshots and response headers clustered by similarity.
  - **aquatone_urls.txt**: A file containing all responsive URLs. Useful for feeding into other tools.
+ - **aquatone_session.json**: A file containing statistics and page data. Useful for automation.
  - **headers/**: A folder with files containing raw response headers from processed targets
  - **html/**: A folder with files containing the raw response bodies from processed targets. If you are processing a large amount of hosts, and don't need this for further analysis, you can disable this with the `-save-body=false` flag to save some disk space.
  - **screenshots/**: A folder with PNG screenshots of the processed targets
