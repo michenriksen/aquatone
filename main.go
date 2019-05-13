@@ -2,12 +2,15 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/url"
 	"os"
 	"strings"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/michenriksen/aquatone/agents"
 	"github.com/michenriksen/aquatone/core"
 	"github.com/michenriksen/aquatone/parsers"
@@ -65,10 +68,55 @@ func main() {
 
 	sess.Out.Important("%s v%s started at %s\n\n", core.Name, core.Version, sess.Stats.StartedAt.Format(time.RFC3339))
 
+	if *sess.Options.SessionPath != "" {
+		jsonSession, err := ioutil.ReadFile(*sess.Options.SessionPath)
+		if err != nil {
+			sess.Out.Fatal("Unable to read session file at %s: %s\n", *sess.Options.SessionPath, err)
+			os.Exit(1)
+		}
+
+		var parsedSession core.Session
+		if err := json.Unmarshal(jsonSession, &parsedSession); err != nil {
+			sess.Out.Fatal("Unable to parse session file at %s: %s\n", *sess.Options.SessionPath, err)
+			os.Exit(1)
+		}
+
+		sess.Out.Important("Loaded Aquatone session at %s\n", *sess.Options.SessionPath)
+		sess.Out.Important("Generating HTML report...")
+		var template []byte
+		if *sess.Options.TemplatePath != "" {
+			template, err = ioutil.ReadFile(*sess.Options.TemplatePath)
+		} else {
+			template, err = sess.Asset("static/report_template.html")
+		}
+
+		if err != nil {
+			sess.Out.Fatal("Can't read report template file\n")
+			os.Exit(1)
+		}
+
+		report := core.NewReport(&parsedSession, string(template))
+		f, err := os.OpenFile(sess.GetFilePath("aquatone_report.html"), os.O_RDWR|os.O_CREATE, 0644)
+		if err != nil {
+			sess.Out.Fatal("Error during report generation: %s\n", err)
+			os.Exit(1)
+		}
+
+		err = report.Render(f)
+		if err != nil {
+			sess.Out.Fatal("Error during report generation: %s\n", err)
+			os.Exit(1)
+		}
+		sess.Out.Important(" done\n\n")
+		sess.Out.Important("Wrote HTML report to: %s\n\n", sess.GetFilePath("aquatone_report.html"))
+		os.Exit(0)
+	}
+
 	agents.NewTCPPortScanner().Register(sess)
 	agents.NewURLPublisher().Register(sess)
 	agents.NewURLRequester().Register(sess)
-	agents.NewURLLogger().Register(sess)
+	agents.NewURLHostnameResolver().Register(sess)
+	agents.NewURLPageTitleExtractor().Register(sess)
 	agents.NewURLScreenshotter().Register(sess)
 	agents.NewURLTechnologyFingerprinter().Register(sess)
 	agents.NewURLTakeoverDetector().Register(sess)
@@ -116,66 +164,61 @@ func main() {
 	sess.EventBus.WaitAsync()
 	sess.WaitGroup.Wait()
 
-	sess.Out.Important("\nClustering similar sites...")
-	pageStructures := make(map[string][]string)
-	var pageClusters [][]*core.ResponsiveURL
-
+	sess.Out.Important("Calculating page structures...")
 	f, _ := os.OpenFile(sess.GetFilePath("aquatone_urls.txt"), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-
-	for _, responsiveURL := range sess.ResponsiveURLs {
-		filename := sess.GetFilePath(fmt.Sprintf("html/%s.html", agents.BaseFilenameFromURL(responsiveURL.URL)))
+	for _, page := range sess.Pages {
+		filename := sess.GetFilePath(fmt.Sprintf("html/%s.html", page.BaseFilename()))
 		body, err := os.Open(filename)
 		if err != nil {
 			continue
 		}
 		structure, _ := core.GetPageStructure(body)
-		pageStructures[responsiveURL.URL] = structure
-		f.WriteString(responsiveURL.URL + "\n")
+		page.PageStructure = structure
+		f.WriteString(page.URL + "\n")
 	}
 	f.Close()
+	sess.Out.Important(" done\n")
 
-	// Loop over URL and page structure pairs
-	for url, structure := range pageStructures {
+	sess.Out.Important("Clustering similar pages...")
+	for _, page := range sess.Pages {
 		foundCluster := false
-		// Loop over existing page clusters
-		for i, cluster := range pageClusters {
+		for clusterUUID, cluster := range sess.PageSimilarityClusters {
 			addToCluster := true
-			// Loop over pages in cluster and check if similarity for all are 0.80 or above
-			for _, url2 := range cluster {
-				if core.GetSimilarity(structure, pageStructures[url2.URL]) < 0.80 {
+			for _, pageURL := range cluster {
+				page2 := sess.GetPage(pageURL)
+				if page2 != nil && core.GetSimilarity(page.PageStructure, page2.PageStructure) < 0.80 {
 					addToCluster = false
+					break
 				}
 			}
-			// Add to cluster if similarity between all pages are 0.80 or above
+
 			if addToCluster {
 				foundCluster = true
-				pageClusters[i] = append(pageClusters[i], sess.ResponsiveURLs[url])
+				sess.PageSimilarityClusters[clusterUUID] = append(sess.PageSimilarityClusters[clusterUUID], page.URL)
 				break
 			}
 		}
-		// If a cluster was not found for the page, create a new cluster for the page
+
 		if !foundCluster {
-			pageClusters = append(pageClusters, []*core.ResponsiveURL{sess.ResponsiveURLs[url]})
+			newClusterUUID := uuid.New().String()
+			sess.PageSimilarityClusters[newClusterUUID] = []string{page.URL}
 		}
 	}
-
 	sess.Out.Important(" done\n")
+
 	sess.Out.Important("Generating HTML report...")
-
-	reportData := core.ReportData{
-		Session: sess,
+	var template []byte
+	if *sess.Options.TemplatePath != "" {
+		template, err = ioutil.ReadFile(*sess.Options.TemplatePath)
+	} else {
+		template, err = sess.Asset("static/report_template.html")
 	}
 
-	for _, urls := range pageClusters {
-		cluster, err := core.NewCluster(urls, sess)
-		if err != nil {
-			sess.Out.Fatal("Error during report generation: %s\n", err)
-			os.Exit(1)
-		}
-		reportData.Clusters = append(reportData.Clusters, cluster)
+	if err != nil {
+		sess.Out.Fatal("Can't read report template file\n")
+		os.Exit(1)
 	}
-
-	report := core.NewReport(reportData)
+	report := core.NewReport(sess, string(template))
 	f, err = os.OpenFile(sess.GetFilePath("aquatone_report.html"), os.O_RDWR|os.O_CREATE, 0644)
 	if err != nil {
 		sess.Out.Fatal("Error during report generation: %s\n", err)
@@ -186,10 +229,16 @@ func main() {
 		sess.Out.Fatal("Error during report generation: %s\n", err)
 		os.Exit(1)
 	}
-
 	sess.Out.Important(" done\n\n")
 
 	sess.End()
+
+	sess.Out.Important("Writing session file...")
+	err = sess.SaveToFile("aquatone_session.json")
+	if err != nil {
+		sess.Out.Error("Failed!\n")
+		sess.Out.Debug("Error: %v\n", err)
+	}
 
 	sess.Out.Important("Time:\n")
 	sess.Out.Info(" - Started at  : %v\n", sess.Stats.StartedAt.Format(time.RFC3339))

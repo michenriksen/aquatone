@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"io"
 
 	"github.com/pmezard/go-difflib/difflib"
@@ -12,12 +13,19 @@ func GetPageStructure(body io.Reader) ([]string, error) {
 	z := html.NewTokenizer(body)
 	for {
 		tt := z.Next()
+		token := z.Token()
 		switch tt {
 		case html.ErrorToken:
 			return structure, nil
 		case html.StartTagToken:
-			tn, _ := z.TagName()
-			structure = append(structure, string(tn))
+			structure = append(structure, token.Data)
+			for _, attr := range token.Attr {
+				if attr.Key != "id" {
+					continue
+				}
+				structure = append(structure, fmt.Sprintf("#%s", attr.Val))
+				break
+			}
 		}
 	}
 }

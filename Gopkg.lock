@@ -34,6 +34,14 @@
   version = "v1.7.0"
 
 [[projects]]
+  digest = "1:582b704bebaa06b48c29b0cec224a6058a09c86883aaddabde889cd1a5f73e1b"
+  name = "github.com/google/uuid"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "0cd6bf5da1e1c83f8b45653022c74f71af0538a4"
+  version = "v1.1.1"
+
+[[projects]]
   branch = "master"
   digest = "1:d06a6c979a16ebfb8969f6f188bb6b014d96ed56b8adbf3bf63a07ff5e0e7075"
   name = "github.com/lair-framework/go-nmap"
@@ -158,6 +166,7 @@
     "github.com/PuerkitoBio/goquery",
     "github.com/asaskevich/EventBus",
     "github.com/fatih/color",
+    "github.com/google/uuid",
     "github.com/lair-framework/go-nmap",
     "github.com/mvdan/xurls",
     "github.com/parnurzeal/gorequest",

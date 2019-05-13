@@ -1,13 +1,11 @@
 package agents
 
 import (
-	"bufio"
 	"bytes"
 	"encoding/json"
 	"fmt"
 	"os"
 	"regexp"
-	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/michenriksen/aquatone/core"
@@ -88,7 +86,7 @@ func NewURLTechnologyFingerprinter() *URLTechnologyFingerprinter {
 	return &URLTechnologyFingerprinter{}
 }
 
-func (d *URLTechnologyFingerprinter) ID() string {
+func (a *URLTechnologyFingerprinter) ID() string {
 	return "agent:url_technology_fingerprinter"
 }
 
@@ -114,17 +112,23 @@ func (a *URLTechnologyFingerprinter) loadFingerprints() {
 
 func (a *URLTechnologyFingerprinter) OnURLResponsive(url string) {
 	a.session.Out.Debug("[%s] Received new responsive URL %s\n", a.ID(), url)
+	page := a.session.GetPage(url)
+	if page == nil {
+		a.session.Out.Error("Unable to find page for URL: %s\n", url)
+		return
+	}
+
 	a.session.WaitGroup.Add()
-	go func(url string) {
+	go func(page *core.Page) {
 		defer a.session.WaitGroup.Done()
 		seen := make(map[string]struct{})
-		fingerprints := append(a.fingerprintHeaders(url), a.fingerprintBody(url)...)
+		fingerprints := append(a.fingerprintHeaders(page), a.fingerprintBody(page)...)
 		for _, f := range fingerprints {
 			if _, ok := seen[f.Name]; ok {
 				continue
 			}
 			seen[f.Name] = struct{}{}
-			a.session.AddTagToResponsiveURL(url, f.Name, "info", f.Website)
+			page.AddTag(f.Name, "info", f.Website)
 			for _, impl := range f.Implies {
 				if _, ok := seen[impl]; ok {
 					continue
@@ -132,38 +136,27 @@ func (a *URLTechnologyFingerprinter) OnURLResponsive(url string) {
 				seen[impl] = struct{}{}
 				for _, implf := range a.fingerprints {
 					if impl == implf.Name {
-						a.session.AddTagToResponsiveURL(url, implf.Name, "info", implf.Website)
+						page.AddTag(implf.Name, "info", implf.Website)
 						break
 					}
 				}
 			}
 		}
-	}(url)
+	}(page)
 }
 
-func (a *URLTechnologyFingerprinter) fingerprintHeaders(url string) []Fingerprint {
+func (a *URLTechnologyFingerprinter) fingerprintHeaders(page *core.Page) []Fingerprint {
 	var technologies []Fingerprint
-	baseFileName := BaseFilenameFromURL(url)
-	headers, err := a.session.ReadFile(fmt.Sprintf("headers/%s.txt", baseFileName))
-	if err != nil {
-		a.session.Out.Debug("[%s] Error reading header file for %s: %s\n", a.ID(), url, err)
-		return technologies
-	}
 
-	scanner := bufio.NewScanner(bytes.NewReader(headers))
-	for scanner.Scan() {
-		split := strings.SplitN(scanner.Text(), ": ", 2)
-		if len(split) != 2 {
-			continue
-		}
-
+	for _, header := range page.Headers {
 		for _, fingerprint := range a.fingerprints {
 			for name, pattern := range fingerprint.HeaderFingerprints {
-				if name != split[0] {
+				if name != header.Name {
 					continue
 				}
-				if pattern.Regexp.MatchString(split[1]) {
-					a.session.Out.Debug("[%s] Identified technology %s on %s from %s response header\n", a.ID(), fingerprint.Name, url, split[0])
+
+				if pattern.Regexp.MatchString(header.Value) {
+					a.session.Out.Debug("[%s] Identified technology %s on %s from %s response header\n", a.ID(), fingerprint.Name, page.URL, header.Name)
 					technologies = append(technologies, fingerprint)
 				}
 			}
@@ -173,17 +166,16 @@ func (a *URLTechnologyFingerprinter) fingerprintHeaders(url string) []Fingerprin
 	return technologies
 }
 
-func (a *URLTechnologyFingerprinter) fingerprintBody(url string) []Fingerprint {
+func (a *URLTechnologyFingerprinter) fingerprintBody(page *core.Page) []Fingerprint {
 	var technologies []Fingerprint
-	baseFileName := BaseFilenameFromURL(url)
-	body, err := a.session.ReadFile(fmt.Sprintf("html/%s.html", baseFileName))
+	body, err := a.session.ReadFile(fmt.Sprintf("html/%s.html", page.BaseFilename()))
 	if err != nil {
-		a.session.Out.Debug("[%s] Error reading HTML body file for %s: %s\n", a.ID(), url, err)
+		a.session.Out.Debug("[%s] Error reading HTML body file for %s: %s\n", a.ID(), page.URL, err)
 		return technologies
 	}
 	doc, err := goquery.NewDocumentFromReader(bytes.NewReader(body))
 	if err != nil {
-		a.session.Out.Debug("[%s] Error when parsing HTML body file for %s: %s\n", a.ID(), url, err)
+		a.session.Out.Debug("[%s] Error when parsing HTML body file for %s: %s\n", a.ID(), page.URL, err)
 		return technologies
 	}
 
@@ -194,7 +186,7 @@ func (a *URLTechnologyFingerprinter) fingerprintBody(url string) []Fingerprint {
 	for _, fingerprint := range a.fingerprints {
 		for _, pattern := range fingerprint.HTMLFingerprints {
 			if pattern.Regexp.MatchString(strBody) {
-				a.session.Out.Debug("[%s] Identified technology %s on %s from HTML\n", a.ID(), fingerprint.Name, url)
+				a.session.Out.Debug("[%s] Identified technology %s on %s from HTML\n", a.ID(), fingerprint.Name, page.URL)
 				technologies = append(technologies, fingerprint)
 			}
 		}
@@ -203,7 +195,7 @@ func (a *URLTechnologyFingerprinter) fingerprintBody(url string) []Fingerprint {
 			scripts.Each(func(i int, s *goquery.Selection) {
 				if script, exists := s.Attr("src"); exists {
 					if pattern.Regexp.MatchString(script) {
-						a.session.Out.Debug("[%s] Identified technology %s on %s from script tag\n", a.ID(), fingerprint.Name, url)
+						a.session.Out.Debug("[%s] Identified technology %s on %s from script tag\n", a.ID(), fingerprint.Name, page.URL)
 						technologies = append(technologies, fingerprint)
 					}
 				}
@@ -215,7 +207,7 @@ func (a *URLTechnologyFingerprinter) fingerprintBody(url string) []Fingerprint {
 				if n, _ := s.Attr("name"); n == name {
 					content, _ := s.Attr("content")
 					if pattern.Regexp.MatchString(content) {
-						a.session.Out.Debug("[%s] Identified technology %s on %s from meta tag\n", a.ID(), fingerprint.Name, url)
+						a.session.Out.Debug("[%s] Identified technology %s on %s from meta tag\n", a.ID(), fingerprint.Name, page.URL)
 						technologies = append(technologies, fingerprint)
 					}
 				}

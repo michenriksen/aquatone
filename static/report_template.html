@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="Aquatone Report">
+  <meta name="author" content="Michael Henriksen (https://twiter.com/michenriksen)">
+  <meta name="generator" content="Aquatone v{{.Version}}">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Aquatone Report</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/visjs-network@4.24.7/dist/vis.min.css"
+    integrity="sha384-hv6STAGuk4qTwmryFbZZTn3QrGRyZW1soC9K/Dy68zs8subBFOU69tg/GGZfkIBb" crossorigin="anonymous">
+  <style type="text/css">
+    footer {
+      border-top: 1px solid rgba(0, 0, 0, .125);
+      margin-top: 50px;
+      padding: 50px;
+      text-align: center;
+      font-size: 12px;
+      color: rgb(68, 68, 68);
+    }
+
+    footer a {
+      color: inherit !important;
+      text-decoration: underline;
+    }
+
+    .carousel {
+      margin-bottom: 50px;
+    }
+
+    .carousel-item {
+      color: #383d41;
+      text-align: center;
+    }
+
+    .carousel-item .page-card {
+      width: 300px;
+      text-align: left;
+      margin: 25px 10px 55px 10px;
+      display: inline-block;
+    }
+
+    .single-page-container .page-card,
+    .single-page-container .page-headers-table {
+      margin: 0px 0px 50px 0px;
+    }
+
+    .page-screenshot-container {
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(0, 0, 0, .125);
+    }
+
+    .page-screenshot {
+      transition: transform .5s ease-out;
+      cursor: zoom-in;
+      width: 100%;
+    }
+
+    .carousel-control-prev,
+    .carousel-control-next {
+      width: 5%;
+    }
+
+    .carousel-control-prev-icon {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%236c757d' viewBox='0 0 8 8'%3e%3cpath d='M5.25 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z'/%3e%3c/svg%3e");
+    }
+
+    .carousel-control-next-icon {
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%236c757d' viewBox='0 0 8 8'%3e%3cpath d='M2.75 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z'/%3e%3c/svg%3e");
+    }
+
+    .carousel-indicators li {
+      background-color: #6c757d;
+    }
+
+    .badge {
+      margin-right: 5px;
+    }
+
+    .page-headers-table {
+      width: 100%;
+    }
+
+    .page-headers-table td {
+      font-family: Anonymous Pro, Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;
+    }
+
+    .page-headers-table td.header-value {
+      word-break: break-all;
+    }
+
+    .single-page-container {
+      border-bottom: 1px solid rgba(0, 0, 0, .125);
+      margin-bottom: 50px;
+    }
+
+    .graph-container {
+      position: relative;
+      width: 100%;
+      height: 700px;
+      margin-top: 20px;
+      border: 1px solid rgba(0, 0, 0, .125);
+    }
+
+    .graph {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .graph-loading-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 9999;
+      background-color: #ffffff;
+      text-align: center;
+      padding-top: 25%;
+    }
+
+    .graph-loading-overlay .progress {
+      margin-left: auto;
+      margin-right: auto;
+      width: 50%;
+      height: 35px;
+    }
+
+    .show-more-button {
+      margin-top: 50px;
+      margin-bottom: 50px;
+    }
+
+    #screenshotModal .page-screenshot {
+      width: 100%;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+    <a class="navbar-brand" href="#">AQUATONE</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarMenu"
+      aria-controls="#navbarMenu" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarMenu">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="pagesDropdown" role="button" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            Pages
+          </a>
+          <div class="dropdown-menu" aria-labelledby="pagesDropdown">
+            <a class="dropdown-item" href="#/pages/by-similarity">By Similarity</a>
+            <a class="dropdown-item" href="#/pages/by-hosts">By Hosts</a>
+            <a class="dropdown-item" href="#/pages/single">Single Pages</a>
+          </div>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#/pages/graph">Graph</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <main role="main" class="container" id="app">
+    <router-view></router-view>
+  </main>
+
+  <footer id="footer">
+    <p class="text-muted">AQUATONE v{{.Version}} &middot; made with <span
+        style="color:red;font-weight:bold">&#65533;</span> by <a href="https://michenriksen.com" target="_blank">Michael
+        Henriksen</a></p>
+    <p><a href="https://www.buymeacoffee.com/michenriksen" target="_blank"><img
+          src="data:image/png;base64,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"
+          alt="Buy Me A Coffee" style="height: auto !important;width: auto !important;"></a></p>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+    integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+    integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/underscore@1.9.1/underscore-min.js"
+    integrity="sha384-5DWzr9S4agqS3WKvPrhFKJagpYyHOBsf3/DxuDKORyqCv2sYer9c/ExdhPOL8CGh"
+    crossorigin="anonymous"></script>
+  <!-- TODO Change to production version -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"
+    integrity="sha384-9u9lzb/hr8e14GLHe5TEOrTiH3Qtw5DX2Zw9X/g7cqj81W2McEMx5CKOszxdb8jg"
+    crossorigin="anonymous"></script>
+  <!-- TODO Change to production version -->
+  <script src="https://cdn.jsdelivr.net/npm/vue-router@3.0.6/dist/vue-router.js"
+    integrity="sha384-TRBEvNYRfnwjdwy/hUVEiWQOlb0dPNyi+C0/OuZOYzLPv9P7M2tZ2jqKeOX+kpS3"
+    crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/visjs-network@4.24.7/dist/vis.min.js"
+    integrity="sha384-oakKFXWtujbJX7wGZH2I3z1MXq8kc0RqfMnyFBYctBBM/1G5r9ZpLG7ese6fTdu4"
+    crossorigin="anonymous"></script>
+
+  <script type="text/x-template" id="pageCarouselTemplate">
+      <div class="page-similarity-cluster carousel slide" :id="'carousel_' + id" data-interval="false">
+        <ol class="carousel-indicators">
+          <li :data-target="'#carousel_' + id" v-for="(pageGroup, index) in pagesInGroups" :data-slide-to="index" :class="{ 'active': index === 0 }"></li>
+        </ol>
+        <div class="carousel-inner">
+          <div class="carousel-item" v-for="(pageGroup, index) in pagesInGroups" :class="{ 'active': index === 0 }">
+            <page-card v-for="page in pageGroup" v-bind:page="page" v-bind:key="page.uuid"></page-card>
+          </div>
+
+          <a class="carousel-control-prev" :href="'#carousel_' + id" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+          </a>
+          <a class="carousel-control-next" :href="'#carousel_' + id" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+          </a>
+        </div>
+        <hr />
+    </div>
+  </script>
+
+  <script type="text/x-template" id="PageCardTemplate">
+    <div class="card page-card">
+      <div class="card-header text-truncate" :title="page.url">
+        ${ page.url }
+      </div>
+      <div class="page-screenshot-container" v-on:mouseover="zoomScreenshot" v-on:mouseout="unzoomScreenshot" v-on:mousemove="alignZoomWithCursor">
+        <img v-if="page.hasScreenshot" :src="page.screenshotPath" class="card-img page-screenshot" :alt="page.url" v-on:click="openScreenshotModal" />
+        <img v-else src="data:image/png;base64,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" class="card-img page-screenshot page-no-screenshot" />
+      </div>
+      <div class="card-body">
+        <h5 class="card-title" v-if="page.pageTitle">${ page.pageTitle }</h5>
+        <h5 class="card-title" v-else><em>No title</em></h5>
+        <p class="card-text">
+          <span :class="'badge badge-pill text-break text-wrap ' + badgeClassForStatus()">${ page.status }</span><a v-for="tag in page.tags" :href="tag.link" target="_blank" class="badge badge-pill text-break" :class="'badge-' + tag.type">${ tag.text }</a>
+        </p>
+      </div>
+      <div class="card-footer">
+        <a href="#" class="btn btn-outline-primary btn-sm card-link" v-on:click="openDetailsModal">View Details</a> <a class="btn btn-outline-secondary btn-sm card-link float-right" :href="page.url" target="_blank">Visit Page</a>
+      </div>
+    </div>
+  </script>
+
+  <script type="text/x-template" id="pageHeadersTableTemplate">
+    <table class="table table-striped table-hover table-sm page-headers-table">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">Header</th>
+          <th scope="col">Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="header in headers" :class="classForHeader(header)">
+          <td class="header-name">${ header.name }</td>
+          <td class="header-value">${ header.value }</td>
+        </tr>
+      </tbody>
+    </table>
+  </script>
+
+  <script type="text/x-template" id="singlePageTemplate">
+    <div class="row single-page-container">
+        <div class="col-4">
+          <page-card v-bind:page="page"></page-card>
+        </div>
+        <div class="col-8">
+          <page-headers-table v-bind:headers="page.headers"></page-headers-table>
+        </div>
+    </div>
+  </script>
+
+  <script type="text/x-template" id="pagesBySimilarityPageTemplate">
+    <div>
+      <h2 class="display-4 text-center border-bottom pb-3">Pages by Similarity</h2>
+      <div v-if="clusterIndex < pageSimilarityClusters.length" v-for="clusterIndex in clustersToShow">
+        <page-carousel v-bind:id="pageSimilarityClusters[clusterIndex].uuid" v-bind:pages="pageSimilarityClusters[clusterIndex].pages"
+          v-bind:key="pageSimilarityClusters[clusterIndex].uuid">
+        </page-carousel>
+      </div>
+      <button @click="clustersToShow += 15" :disabled="clustersToShow >= pageSimilarityClusters.length" class="btn btn-primary btn-lg btn-block show-more-button">Show More</button>
+    </div>
+  </script>
+
+  <script type="text/x-template" id="pagesByHostsPageTemplate">
+    <div>
+      <h2 class="display-4 text-center border-bottom pb-3">Pages by Hosts</h2>
+      <div v-if="clusterIndex < pagesByHosts.length" v-for="clusterIndex in clustersToShow">
+        <page-carousel v-bind:id="pagesByHosts[clusterIndex].id" v-bind:pages="pagesByHosts[clusterIndex].pages"
+          v-bind:key="pagesByHosts[clusterIndex].id">
+        </page-carousel>
+      </div>
+      <button @click="clustersToShow += 15" :disabled="clustersToShow >= pagesByHosts.length" class="btn btn-primary btn-lg btn-block show-more-button">Show More</button>
+    </div>
+  </script>
+
+  <script type="text/x-template" id="singlePagesPageTemplate">
+    <div>
+      <h2 class="display-4 text-center border-bottom pb-3">Pages</h2>
+      <div v-if="pageIndex < pages.length" v-for="pageIndex in pagesToShow">
+        <single-page v-bind:id="pages[pageIndex].uuid" v-bind:page="pages[pageIndex]" v-bind:key="pages[pageIndex].uuid"></single-page>
+      </div>
+      <button @click="pagesToShow += 15" :disabled="pagesToShow >= pages.length" class="btn btn-primary btn-lg btn-block show-more-button">Show More</button>
+    </div>
+  </script>
+
+  <script type="text/x-template" id="graphPageTemplate">
+    <div class="graph-container">
+      <div class="graph" id="graph"></div>
+      <div class="graph-loading-overlay" id="graphLoadingOverlay">
+        <h3>Loading graph...</h3>
+        <div class="progress">
+          <div class="progress-bar bg-info" id="graphProgress" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="2500"></div>
+        </div>
+      </div>
+    </div>
+  </script>
+
+  <script type="text/javascript">
+    function parseSession(session) {
+      let data = {
+        version: session.version,
+        stats: session.stats,
+        pages: [],
+        pageSimilarityClusters: []
+      }
+      for (let pageUrl in session.pages) {
+        data.pages.push(session.pages[pageUrl]);
+      }
+      for (let uuid in session.pageSimilarityClusters) {
+        let cluster = {
+          uuid: uuid,
+          pages: []
+        }
+        for (let pageUrl of session.pageSimilarityClusters[uuid]) {
+          cluster.pages.push(session.pages[pageUrl])
+        }
+        data.pageSimilarityClusters.push(cluster);
+      }
+      data.pageSimilarityClusters.sort((a, b) => {
+        return a.pages.length - b.pages.length;
+      });
+      return data;
+    }
+
+    Vue.component('PagesBySimilarityPage', {
+      template: '#pagesBySimilarityPageTemplate',
+      delimiters: ['${', '}'],
+      data() {
+        return {
+          clustersToShow: 15
+        }
+      },
+      props: {
+        pageSimilarityClusters: Array
+      }
+    });
+
+    Vue.component('PagesByHostsPage', {
+      template: '#pagesByHostsPageTemplate',
+      delimiters: ['${', '}'],
+      data() {
+        return {
+          clustersToShow: 15
+        }
+      },
+      props: {
+        pages: Array
+      },
+      computed: {
+        pagesByHosts() {
+          result = {}
+          for (let page of this.pages) {
+            if (page.hostname in result) {
+              result[page.hostname].pages.push(page);
+            } else {
+              result[page.hostname] = {
+                id: _.uniqueId('host-cluster_'),
+                pages: [page]
+              }
+            }
+          }
+          return _.values(result);
+        }
+      }
+    });
+
+    Vue.component('SinglePagesPage', {
+      template: '#singlePagesPageTemplate',
+      delimiters: ['${', '}'],
+      data() {
+        return {
+          pagesToShow: 15
+        }
+      },
+      props: {
+        pages: Array
+      }
+    });
+
+    Vue.component('GraphPage', {
+      template: '#graphPageTemplate',
+      delimiters: ['${', '}'],
+      props: {
+        pages: Array,
+        pageSimilarityClusters: Array
+      },
+      computed: {
+        makeDatasets() {
+          let nodes = {};
+          let edges = [];
+
+          for (let page of this.pages) {
+            pageId = `page_${page.uuid}`;
+            nodes[pageId] = {
+              id: pageId,
+              label: page.url,
+              group: 'page',
+              value: 1
+            };
+
+            if (page.tags) {
+              for (let tag of page.tags) {
+                let tagId = `tag_${tag.hash}`;
+                if (!(tagId in nodes)) {
+                  nodes[tagId] = {
+                    id: tagId,
+                    label: tag.text,
+                    group: 'tag',
+                    value: 1,
+                  };
+                } else {
+                  nodes[tagId].value += 3;
+                }
+                edges.push({
+                  from: pageId, to: tagId
+                });
+              }
+            }
+
+            if (page.addrs) {
+              for (let addr of page.addrs) {
+                let addrId = `addr_${addr}`;
+                if (!(addrId in nodes)) {
+                  nodes[addrId] = {
+                    id: addrId,
+                    label: addr,
+                    group: 'addr',
+                    value: 1
+                  };
+                } else {
+                  nodes[addrId].value += 3
+                }
+                edges.push({
+                  from: pageId, to: addrId
+                });
+              }
+            }
+          }
+
+          for (let cluster of this.pageSimilarityClusters) {
+            if (cluster.pages.length <= 1) {
+              continue;
+            }
+
+            clusterId = `cluster_${cluster.uuid}`;
+            nodes[clusterId] = {
+              id: clusterId,
+              label: 'Similar',
+              group: 'similarity',
+              value: 1 + (cluster.pages.length * 3)
+            };
+
+            for (page of cluster.pages) {
+              edges.push({
+                from: `page_${page.uuid}`, to: clusterId
+              });
+            }
+          }
+
+
+          return [new vis.DataSet(_.values(nodes)), new vis.DataSet(edges)]
+        }
+      },
+      mounted: function () {
+        this.$nextTick(() => {
+          $('#footer').hide();
+          $('#graphLoadingOverlay').show();
+          let datasets = this.makeDatasets;
+          let data = {
+            nodes: datasets[0],
+            edges: datasets[1]
+          }
+          let progress = $('#graphProgress');
+
+          let network = new vis.Network($('#graph')[0], data, {
+            layout: {
+              improvedLayout: false,
+            },
+            nodes: {
+              shape: 'dot',
+            },
+            edges: {
+              color: { inherit: 'to' },
+              smooth: false,
+            },
+            physics: {
+              enabled: false,
+              forceAtlas2Based: {
+                springLength: 230,
+                springConstant: 0.18
+              },
+              maxVelocity: 146,
+              solver: 'forceAtlas2Based',
+              timestep: 0.35,
+              stabilization: {
+                enabled: true,
+                iterations: 2500,
+                updateInterval: 25
+              },
+            },
+            groups: {
+              'page': {
+                color: '#28a745'
+              },
+              'tag': {
+                color: '#007bff'
+              },
+              'addr': {
+                color: '#17a2b8'
+              },
+              'similarity': {
+                color: '#ffc107'
+              }
+            }
+          });
+
+          network.on('stabilizationProgress', (params) => {
+            let percentage = (params.iterations / params.total) * 100;
+            progress.attr('aria-valuenow', params.iterations).css('width', `${percentage}%`);
+          });
+
+          network.once('stabilizationIterationsDone', () => {
+            progress.attr('aria-valuenow', 2500).css('width', '100%');
+            $('#graphLoadingOverlay').hide();
+          });
+
+          network.stabilize(2500);
+        });
+      },
+      destroyed: function () {
+        this.$nextTick(() => {
+          $('#footer').show();
+        });
+      }
+    });
+
+    Vue.component('NotFoundPage', {
+      template: "<h1>Ooops. Don't know where that is.</h1>"
+    });
+
+    Vue.component('page-carousel', {
+      template: '#pageCarouselTemplate',
+      delimiters: ['${', '}'],
+      props: {
+        id: String,
+        pages: Array,
+      },
+      computed: {
+        pagesInGroups() {
+          return _.chunk(this.pages, 3);
+        }
+      }
+    });
+
+    Vue.component('page-card', {
+      template: '#PageCardTemplate',
+      delimiters: ['${', '}'],
+      props: {
+        page: Object
+      },
+      methods: {
+        badgeClassForStatus() {
+          let statusCode = parseInt(/^(\d+)\s/.exec(this.page.status)[0]);
+          if (statusCode > 499) {
+            return 'badge-danger';
+          } else if (statusCode > 399) {
+            return 'badge-warning';
+          } else if (statusCode > 299) {
+            return 'badge-info';
+          } else if (statusCode > 199) {
+            return 'badge-success';
+          } else {
+            return 'badge-secondary';
+          }
+        },
+        zoomScreenshot(event) {
+          $(event.target).css({ 'transform': 'scale(2)' });
+        },
+        unzoomScreenshot(event) {
+          $(event.target).css({ 'transform': 'scale(1)' });
+        },
+        alignZoomWithCursor(event) {
+          let container = $(event.target).closest('.page-screenshot-container');
+          $(event.target).css({ 'transform-origin': ((event.pageX - container.offset().left) / container.width()) * 100 + '% ' + ((event.pageY - container.offset().top) / container.height()) * 100 + '%' });
+        },
+        openScreenshotModal(event) {
+          event.preventDefault();
+          let modalTemplate = $("#screenshotModal");
+          modalTemplate.find('.modal-title').text(this.page.url);
+          modalTemplate.find('.screenshot-link').attr('href', this.page.screenshotPath);
+          modalTemplate.find('.page-screenshot').attr('src', this.page.screenshotPath).attr('alt', this.page.url);
+          modalTemplate.modal('show');
+        },
+        openDetailsModal(event) {
+          event.preventDefault();
+          let modalTemplate = $("#detailsModal");
+          let res = Vue.compile('<page-headers-table v-bind:headers="headers"></page-headers-table>');
+          new Vue({
+            data: {
+              headers: this.page.headers
+            },
+            render: res.render,
+            staticRenderFns: res.staticRenderFns
+          }).$mount('#detailsModal .page-headers-table');
+          modalTemplate.find('.modal-title').text(this.page.url);
+          modalTemplate.find('.visit-page-button').attr('href', this.page.url);
+          modalTemplate.find('.view-raw-headers-button').attr('href', this.page.headersPath);
+          modalTemplate.find('.view-raw-response-button').attr('href', this.page.bodyPath);
+          modalTemplate.modal('show');
+        }
+      }
+    });
+
+    Vue.component('page-headers-table', {
+      template: '#pageHeadersTableTemplate',
+      delimiters: ['${', '}'],
+      props: {
+        headers: Array
+      },
+      methods: {
+        classForHeader(header) {
+          if (header.increasesSecurity) {
+            return 'table-success';
+          } else if (header.decreasesSecurity) {
+            return 'table-warning';
+          }
+          return '';
+        }
+      }
+    });
+
+    Vue.component('single-page', {
+      template: '#singlePageTemplate',
+      delimiters: ['${', '}'],
+      props: {
+        page: Object
+      }
+    })
+
+    const session = {{.}};
+    const data = _.extend(parseSession(session), { currentRoute: window.location.hash });
+    const router = new VueRouter({
+      routes: [
+        { path: '/', alias: '/pages/by-similarity', component: Vue.component('PagesBySimilarityPage'), props: { pageSimilarityClusters: data.pageSimilarityClusters } },
+        { path: '/pages/by-hosts', component: Vue.component('PagesByHostsPage'), props: { pages: data.pages } },
+        { path: '/pages/single', component: Vue.component('SinglePagesPage'), props: { pages: data.pages } },
+        { path: '/pages/graph', component: Vue.component('GraphPage'), props: { pages: data.pages, pageSimilarityClusters: data.pageSimilarityClusters } },
+        { path: '/pages/stats', component: Vue.component('StatsPage'), props: { pages: data.pages, pageSimilarityClusters: data.pageSimilarityClusters, stats: data.stats } },
+        { path: '*', component: Vue.component('NotFoundPage') }
+      ]
+    })
+
+    var app = new Vue({
+      el: '#app',
+      data: data,
+      delimiters: ['${', '}'],
+      router: router
+    });
+  </script>
+
+  <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="screenshotModal">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <a href="" target="_blank" class="screenshot-link"><img class="page-screenshot" src="" alt="" /></a>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="detailsModal">
+    <div class="modal-dialog modal-xl">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h3>Response Headers:</h3>
+          <table class="page-headers-table"></table>
+        </div>
+        <div class="modal-footer">
+          <a href="" target="_blank" class="btn btn-primary visit-page-button">Visit Page</a>
+          <a href="" target="_blank" class="btn btn-primary view-raw-headers-button">View Raw Headers</a>
+          <a href="" target="_blank" class="btn btn-primary view-raw-response-button">View Raw Response</a>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>

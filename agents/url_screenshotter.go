@@ -36,11 +36,17 @@ func (a *URLScreenshotter) Register(s *core.Session) error {
 
 func (a *URLScreenshotter) OnURLResponsive(url string) {
 	a.session.Out.Debug("[%s] Received new responsive URL %s\n", a.ID(), url)
+	page := a.session.GetPage(url)
+	if page == nil {
+		a.session.Out.Error("Unable to find page for URL: %s\n", url)
+		return
+	}
+
 	a.session.WaitGroup.Add()
-	go func(url string) {
+	go func(page *core.Page) {
 		defer a.session.WaitGroup.Done()
-		a.screenshotURL(url)
-	}(url)
+		a.screenshotPage(page)
+	}(page)
 }
 
 func (a *URLScreenshotter) locateChrome() {
@@ -97,15 +103,15 @@ func (a *URLScreenshotter) locateChrome() {
 	a.session.Out.Debug("[%s] Located Chrome/Chromium binary at %s\n", a.ID(), a.chromePath)
 }
 
-func (a *URLScreenshotter) screenshotURL(s string) {
-	filePath := a.session.GetFilePath(fmt.Sprintf("screenshots/%s.png", BaseFilenameFromURL(s)))
+func (a *URLScreenshotter) screenshotPage(page *core.Page) {
+	filePath := fmt.Sprintf("screenshots/%s.png", page.BaseFilename())
 	var chromeArguments = []string{
 		"--headless", "--disable-gpu", "--hide-scrollbars", "--mute-audio", "--disable-notifications",
 		"--disable-crash-reporter",
 		"--ignore-certificate-errors",
 		"--user-agent=" + RandomUserAgent(),
 		"--window-size=" + *a.session.Options.Resolution,
-		"--screenshot=" + filePath,
+		"--screenshot=" + a.session.GetFilePath(filePath),
 	}
 
 	if os.Geteuid() == 0 {
@@ -116,7 +122,7 @@ func (a *URLScreenshotter) screenshotURL(s string) {
 		chromeArguments = append(chromeArguments, "--proxy-server="+*a.session.Options.Proxy)
 	}
 
-	chromeArguments = append(chromeArguments, s)
+	chromeArguments = append(chromeArguments, page.URL)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(*a.session.Options.ScreenshotTimeout)*time.Millisecond)
 	defer cancel()
@@ -125,7 +131,7 @@ func (a *URLScreenshotter) screenshotURL(s string) {
 	if err := cmd.Start(); err != nil {
 		a.session.Out.Debug("[%s] Error: %v\n", a.ID(), err)
 		a.session.Stats.IncrementScreenshotFailed()
-		a.session.Out.Error("%s: screenshot failed: %s\n", s, err)
+		a.session.Out.Error("%s: screenshot failed: %s\n", page.URL, err)
 		a.killChromeProcessIfRunning(cmd)
 		return
 	}
@@ -134,18 +140,20 @@ func (a *URLScreenshotter) screenshotURL(s string) {
 		a.session.Stats.IncrementScreenshotFailed()
 		a.session.Out.Debug("[%s] Error: %v\n", a.ID(), err)
 		if ctx.Err() == context.DeadlineExceeded {
-			a.session.Out.Error("%s: screenshot timed out\n", s)
+			a.session.Out.Error("%s: screenshot timed out\n", page.URL)
 			a.killChromeProcessIfRunning(cmd)
 			return
 		}
 
-		a.session.Out.Error("%s: screenshot failed: %s\n", s, err)
+		a.session.Out.Error("%s: screenshot failed: %s\n", page.URL, err)
 		a.killChromeProcessIfRunning(cmd)
 		return
 	}
 
 	a.session.Stats.IncrementScreenshotSuccessful()
-	a.session.Out.Info("%s: %s\n", s, Green("screenshot successful"))
+	a.session.Out.Info("%s: %s\n", page.URL, Green("screenshot successful"))
+	page.ScreenshotPath = filePath
+	page.HasScreenshot = true
 	a.killChromeProcessIfRunning(cmd)
 }
 

@@ -69,38 +69,61 @@ func (a *URLRequester) OnURL(url string) {
 		}
 		a.session.Out.Info("%s: %s\n", url, status)
 
-		a.writeHeaders(url, resp)
+		page, err := a.createPageFromResponse(url, resp)
+		if err != nil {
+			a.session.Out.Debug("[%s] Error: %v\n", a.ID(), err)
+			a.session.Out.Error("Failed to create page for URL: %s\n", url)
+			return
+		}
+
+		a.writeHeaders(page)
 		if *a.session.Options.SaveBody {
-			a.writeBody(url, resp)
+			a.writeBody(page, resp)
 		}
 
 		a.session.EventBus.Publish(core.URLResponsive, url)
 	}(url)
 }
 
-func (a *URLRequester) writeHeaders(url string, resp gorequest.Response) {
-	filepath := a.session.GetFilePath(fmt.Sprintf("headers/%s.txt", BaseFilenameFromURL(url)))
-	headers := fmt.Sprintf("%s\n", resp.Status)
+func (a *URLRequester) createPageFromResponse(url string, resp gorequest.Response) (*core.Page, error) {
+	page, err := a.session.AddPage(url)
+	if err != nil {
+		return nil, err
+	}
+
+	page.Status = resp.Status
 	for name, value := range resp.Header {
-		headers += fmt.Sprintf("%v: %v\n", name, strings.Join(value, " "))
+		page.AddHeader(name, strings.Join(value, " "))
 	}
-	if err := ioutil.WriteFile(filepath, []byte(headers), 0644); err != nil {
-		a.session.Out.Debug("[%s] Error: %v\n", a.ID(), err)
-		a.session.Out.Error("Failed to write HTTP response headers for %s to %s\n", url, filepath)
-	}
+
+	return page, nil
 }
 
-func (a *URLRequester) writeBody(url string, resp gorequest.Response) {
-	filepath := a.session.GetFilePath(fmt.Sprintf("html/%s.html", BaseFilenameFromURL(url)))
+func (a *URLRequester) writeHeaders(page *core.Page) {
+	filepath := fmt.Sprintf("headers/%s.txt", page.BaseFilename())
+	headers := fmt.Sprintf("%s\n", page.Status)
+	for _, header := range page.Headers {
+		headers += fmt.Sprintf("%v: %v\n", header.Name, header.Value)
+	}
+	if err := ioutil.WriteFile(a.session.GetFilePath(filepath), []byte(headers), 0644); err != nil {
+		a.session.Out.Debug("[%s] Error: %v\n", a.ID(), err)
+		a.session.Out.Error("Failed to write HTTP response headers for %s to %s\n", page.URL, a.session.GetFilePath(filepath))
+	}
+	page.HeadersPath = filepath
+}
+
+func (a *URLRequester) writeBody(page *core.Page, resp gorequest.Response) {
+	filepath := fmt.Sprintf("html/%s.html", page.BaseFilename())
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		a.session.Out.Debug("[%s] Error: %v\n", a.ID(), err)
-		a.session.Out.Error("Failed to read response body for %s\n", url)
+		a.session.Out.Error("Failed to read response body for %s\n", page.URL)
 		return
 	}
 
-	if err := ioutil.WriteFile(filepath, body, 0644); err != nil {
+	if err := ioutil.WriteFile(a.session.GetFilePath(filepath), body, 0644); err != nil {
 		a.session.Out.Debug("[%s] Error: %v\n", a.ID(), err)
-		a.session.Out.Error("Failed to write HTTP response body for %s to %s\n", url, filepath)
+		a.session.Out.Error("Failed to write HTTP response body for %s to %s\n", page.URL, a.session.GetFilePath(filepath))
 	}
+	page.BodyPath = filepath
 }

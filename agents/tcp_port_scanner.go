@@ -34,7 +34,7 @@ func (a *TCPPortScanner) OnHost(host string) {
 			defer a.session.WaitGroup.Done()
 			if a.scanPort(port, host) {
 				a.session.Stats.IncrementPortOpen()
-				a.session.Out.Info("%s port %d: %s\n", host, port, Green("open"))
+				a.session.Out.Info("%s: port %s %s\n", host, Green(fmt.Sprintf("%d", port)), Green("open"))
 				a.session.EventBus.Publish(core.TCPPort, port, host)
 			} else {
 				a.session.Stats.IncrementPortClosed()
