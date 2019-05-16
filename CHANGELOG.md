@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.0-beta.2]
+
+### Fixed
+- The pagination logic in the new HTML report would skip the page or cluster at index 0 as the `v-for` function on an integer value in Vue.js starts from 1 and not 0
+
 ## [1.7.0-beta]
 
 ### Added
@@ -94,7 +99,8 @@ Complete rewrite and simplification of Aquatone. Now written in Go and focused o
 - Domain discovery (`aquatone-discover`)
 - Domain takeover discovery (`aquatone-takeover`)
 
-[Unreleased]: https://github.com/michenriksen/aquatone/compare/v1.7.0-beta...HEAD
+[Unreleased]: https://github.com/michenriksen/aquatone/compare/v1.7.0-beta.2...HEAD
+[1.7.0-beta.2]: https://github.com/michenriksen/aquatone/compare/v1.7.0-beta...v1.7.0-beta.2
 [1.7.0-beta]: https://github.com/michenriksen/aquatone/compare/v1.6.0...v1.7.0-beta
 [1.6.0]: https://github.com/michenriksen/aquatone/compare/v1.5.0...v1.6.0
 [1.5.0]: https://github.com/michenriksen/aquatone/compare/v1.4.3...v1.5.0
