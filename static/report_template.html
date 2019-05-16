@@ -287,9 +287,9 @@
   <script type="text/x-template" id="pagesBySimilarityPageTemplate">
     <div>
       <h2 class="display-4 text-center border-bottom pb-3">Pages by Similarity</h2>
-      <div v-if="clusterIndex < pageSimilarityClusters.length" v-for="clusterIndex in clustersToShow">
-        <page-carousel v-bind:id="pageSimilarityClusters[clusterIndex].uuid" v-bind:pages="pageSimilarityClusters[clusterIndex].pages"
-          v-bind:key="pageSimilarityClusters[clusterIndex].uuid">
+      <div v-if="clusterIndex - 1 < pageSimilarityClusters.length" v-for="clusterIndex in clustersToShow">
+        <page-carousel v-bind:id="pageSimilarityClusters[clusterIndex - 1].uuid" v-bind:pages="pageSimilarityClusters[clusterIndex - 1].pages"
+          v-bind:key="pageSimilarityClusters[clusterIndex - 1].uuid">
         </page-carousel>
       </div>
       <button @click="clustersToShow += 15" :disabled="clustersToShow >= pageSimilarityClusters.length" class="btn btn-primary btn-lg btn-block show-more-button">Show More</button>
@@ -299,9 +299,9 @@
   <script type="text/x-template" id="pagesByHostsPageTemplate">
     <div>
       <h2 class="display-4 text-center border-bottom pb-3">Pages by Hosts</h2>
-      <div v-if="clusterIndex < pagesByHosts.length" v-for="clusterIndex in clustersToShow">
-        <page-carousel v-bind:id="pagesByHosts[clusterIndex].id" v-bind:pages="pagesByHosts[clusterIndex].pages"
-          v-bind:key="pagesByHosts[clusterIndex].id">
+      <div v-if="clusterIndex - 1 < pagesByHosts.length" v-for="clusterIndex in clustersToShow">
+        <page-carousel v-bind:id="pagesByHosts[clusterIndex - 1].id" v-bind:pages="pagesByHosts[clusterIndex - 1].pages"
+          v-bind:key="pagesByHosts[clusterIndex - 1].id">
         </page-carousel>
       </div>
       <button @click="clustersToShow += 15" :disabled="clustersToShow >= pagesByHosts.length" class="btn btn-primary btn-lg btn-block show-more-button">Show More</button>
@@ -311,8 +311,8 @@
   <script type="text/x-template" id="singlePagesPageTemplate">
     <div>
       <h2 class="display-4 text-center border-bottom pb-3">Pages</h2>
-      <div v-if="pageIndex < pages.length" v-for="pageIndex in pagesToShow">
-        <single-page v-bind:id="pages[pageIndex].uuid" v-bind:page="pages[pageIndex]" v-bind:key="pages[pageIndex].uuid"></single-page>
+      <div v-if="pageIndex - 1 < pages.length" v-for="pageIndex in pagesToShow">
+        <single-page v-bind:id="pages[pageIndex - 1].uuid" v-bind:page="pages[pageIndex - 1]" v-bind:key="pages[pageIndex - 1].uuid"></single-page>
       </div>
       <button @click="pagesToShow += 15" :disabled="pagesToShow >= pages.length" class="btn btn-primary btn-lg btn-block show-more-button">Show More</button>
     </div>
