@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.7.0]
+
+### Added
+- New `session:start` and `session:end` events have been introduced in the event bus to allow agents to perform bootstrap
+and cleanup tasks if needed
+- A temporary user directory is now created for the Chrome/Chromium process and additional command line flags have been
+added to increase compartmentalization
+
+### Changed
+- Production versions of Vue.js and Vue Router are now used in the HTML report for increased performance
+- List of user agents have been updated to current list of most common user agents
+
 ## [1.7.0-beta.2]
 
 ### Fixed
@@ -99,7 +111,8 @@ Complete rewrite and simplification of Aquatone. Now written in Go and focused o
 - Domain discovery (`aquatone-discover`)
 - Domain takeover discovery (`aquatone-takeover`)
 
-[Unreleased]: https://github.com/michenriksen/aquatone/compare/v1.7.0-beta.2...HEAD
+[Unreleased]: https://github.com/michenriksen/aquatone/compare/v1.7.0...HEAD
+[1.7.0]: https://github.com/michenriksen/aquatone/compare/v1.7.0-beta.2...v1.7.0
 [1.7.0-beta.2]: https://github.com/michenriksen/aquatone/compare/v1.7.0-beta...v1.7.0-beta.2
 [1.7.0-beta]: https://github.com/michenriksen/aquatone/compare/v1.6.0...v1.7.0-beta
 [1.6.0]: https://github.com/michenriksen/aquatone/compare/v1.5.0...v1.6.0
