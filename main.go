@@ -150,6 +150,8 @@ func main() {
 	sess.Out.Important("Ports      : %s\n", strings.Trim(strings.Replace(fmt.Sprint(sess.Ports), " ", ", ", -1), "[]"))
 	sess.Out.Important("Output dir : %s\n\n", *sess.Options.OutDir)
 
+	sess.EventBus.Publish(core.SessionStart)
+
 	for _, target := range targets {
 		if isURL(target) {
 			if hasSupportedScheme(target) {
@@ -160,6 +162,11 @@ func main() {
 		}
 	}
 
+	time.Sleep(1 * time.Second)
+	sess.EventBus.WaitAsync()
+	sess.WaitGroup.Wait()
+
+	sess.EventBus.Publish(core.SessionEnd)
 	time.Sleep(1 * time.Second)
 	sess.EventBus.WaitAsync()
 	sess.WaitGroup.Wait()

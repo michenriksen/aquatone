@@ -3,6 +3,7 @@ package agents
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"regexp"
@@ -14,8 +15,9 @@ import (
 )
 
 type URLScreenshotter struct {
-	session    *core.Session
-	chromePath string
+	session         *core.Session
+	chromePath      string
+	tempUserDirPath string
 }
 
 func NewURLScreenshotter() *URLScreenshotter {
@@ -28,7 +30,9 @@ func (a *URLScreenshotter) ID() string {
 
 func (a *URLScreenshotter) Register(s *core.Session) error {
 	s.EventBus.SubscribeAsync(core.URLResponsive, a.OnURLResponsive, false)
+	s.EventBus.SubscribeAsync(core.SessionEnd, a.OnSessionEnd, false)
 	a.session = s
+	a.createTempUserDir()
 	a.locateChrome()
 
 	return nil
@@ -47,6 +51,22 @@ func (a *URLScreenshotter) OnURLResponsive(url string) {
 		defer a.session.WaitGroup.Done()
 		a.screenshotPage(page)
 	}(page)
+}
+
+func (a *URLScreenshotter) OnSessionEnd() {
+	a.session.Out.Debug("[%s] Received SessionEnd event\n", a.ID())
+	os.RemoveAll(a.tempUserDirPath)
+	a.session.Out.Debug("[%s] Deleted temporary user directory at: %s\n", a.ID(), a.tempUserDirPath)
+}
+
+func (a *URLScreenshotter) createTempUserDir() {
+	dir, err := ioutil.TempDir("", "aquatone-chrome")
+	if err != nil {
+		a.session.Out.Fatal("Unable to create temporary user directory for Chrome/Chromium browser\n")
+		os.Exit(1)
+	}
+	a.session.Out.Debug("[%s] Created temporary user directory at: %s\n", a.ID(), dir)
+	a.tempUserDirPath = dir
 }
 
 func (a *URLScreenshotter) locateChrome() {
@@ -107,8 +127,9 @@ func (a *URLScreenshotter) screenshotPage(page *core.Page) {
 	filePath := fmt.Sprintf("screenshots/%s.png", page.BaseFilename())
 	var chromeArguments = []string{
 		"--headless", "--disable-gpu", "--hide-scrollbars", "--mute-audio", "--disable-notifications",
-		"--disable-crash-reporter",
-		"--ignore-certificate-errors",
+		"--no-first-run", "--disable-crash-reporter", "--ignore-certificate-errors", "--incognito",
+		"--disable-infobars", "--disable-sync", "--no-default-browser-check",
+		"--user-data-dir=" + a.tempUserDirPath,
 		"--user-agent=" + RandomUserAgent(),
 		"--window-size=" + *a.session.Options.Resolution,
 		"--screenshot=" + a.session.GetFilePath(filePath),
