@@ -147,6 +147,14 @@ func (a *URLTakeoverDetector) runDetectorFunctions(page *core.Page) {
 	if a.detectPantheon(page, addrs, cname, string(body)) {
 		return
 	}
+
+	if a.detectEdgecastCDN(u.String(), addrs, cname, string(body)) {
+		return
+	}
+
+	if a.detectSquarespace(u.String(), addrs, cname, string(body)) {
+		return
+	}
 }
 
 func (a *URLTakeoverDetector) detectGithubPages(p *core.Page, addrs []string, cname string, body string) bool {
@@ -441,4 +449,40 @@ func (a *URLTakeoverDetector) detectPantheon(p *core.Page, addrs []string, cname
 		a.session.Out.Warn("%s: vulnerable to takeover on Pantheon\n", p.URL)
 	}
 	return true
+}
+
+func (a *URLTakeoverDetector) detectEdgecastCDN(u string, addrs []string, cname string, body string) bool {
+	if !strings.HasSuffix(cname, ".edgecastcdn.net") {
+		return false
+	}
+	a.session.AddTagToResponsiveURL(u, "EdgecastCDN", "info", "https://www.verizondigitalmedia.com")
+	if strings.Contains(body, "404 - Not Found") {
+		a.session.AddTagToResponsiveURL(u, "Domain Takeover", "danger", "https://www.verizondigitalmedia.com/platform/edgecast-cdn/")
+	}
+	return true
+}
+
+func (a *URLTakeoverDetector) detectSquarespace(u string, addrs []string, cname string, body string) bool {
+	detected := false
+	_, subnet1, _ := net.ParseCIDR("198.49.23.0/24")
+	_, subnet2, _ := net.ParseCIDR("198.185.159.0/24")
+
+	for _, addr := range addrs {
+		ip := net.ParseIP(addr)
+		if ip != nil && (subnet1.Contains(ip) || subnet2.Contains(ip)) {
+			detected = true
+			break
+		}
+	}
+	if strings.HasSuffix(cname, ".squarespace.com.") {
+		detected = true
+	}
+	if detected {
+		a.session.AddTagToResponsiveURL(u, "Squarespace", "info", "https://www.squarespace.com/")
+		if strings.Contains(body, "Squarespace - Claim This Domain") {
+			a.session.AddTagToResponsiveURL(u, "Domain Takeover", "danger", "https://support.squarespace.com/hc/en-us/articles/115002755267")
+		}
+		return true
+	}
+	return false
 }
