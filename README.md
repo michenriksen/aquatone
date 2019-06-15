@@ -8,9 +8,18 @@ Aquatone is a tool for visual inspection of websites across a large amount of ho
 2. Download the [latest release](https://github.com/michenriksen/aquatone/releases/latest) of Aquatone for your operating system.
 3. Uncompress the zip file and move the `aquatone` binary to your desired location. You probably want to move it to a location in your `$PATH` for easier use.
 
-### Compiling the source code
+### Installation From Source
 
-If you for some reason don't trust the pre-compiled binaries, you can also compile the code yourself. **You are on your own if you want to do this. I do not support compiling problems. Good luck with it!**
+You'll need a working installation of Go with go 1.11+ modules support.
+
+```bash
+go get github.com/michenriksen/aquatone/...
+# if $GOPATH/bin is not in your $PATH
+echo 'export $PATH="$PATH:'"$(go env GOPATH)/bin"'"' >> "$(ls ~/.bashrc || ls ~/.bash_profile)"
+
+aquatone
+```
+
 
 ## Usage
 
