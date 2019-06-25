@@ -133,6 +133,7 @@ func (a *URLScreenshotter) screenshotPage(page *core.Page) {
 		"--user-agent=" + RandomUserAgent(),
 		"--window-size=" + *a.session.Options.Resolution,
 		"--screenshot=" + a.session.GetFilePath(filePath),
+		"--virtual-time-budget=" + strconv.Itoa(*a.session.Options.ScreenshotTimeout),
 	}
 
 	if os.Geteuid() == 0 {
