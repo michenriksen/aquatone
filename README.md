@@ -12,6 +12,8 @@ Aquatone is a tool for visual inspection of websites across a large amount of ho
 
 If you for some reason don't trust the pre-compiled binaries, you can also compile the code yourself. **You are on your own if you want to do this. I do not support compiling problems. Good luck with it!**
 
+go get -u github.com/michenriksen/aquatone
+
 ## Usage
 
 ### Command-line options:
