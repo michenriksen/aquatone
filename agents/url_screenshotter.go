@@ -149,6 +149,7 @@ func (a *URLScreenshotter) screenshotPage(page *core.Page) {
 	defer cancel()
 
 	cmd := exec.CommandContext(ctx, a.chromePath, chromeArguments...)
+	a.session.Out.Debug("[%s] Starting Chrome with Arguments %q\n", a.ID(), strings.Join(cmd.Args, ", "))
 	if err := cmd.Start(); err != nil {
 		a.session.Out.Debug("[%s] Error: %v\n", a.ID(), err)
 		a.session.Stats.IncrementScreenshotFailed()
