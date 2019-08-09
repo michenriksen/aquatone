@@ -23,6 +23,8 @@ type Options struct {
 	Silent            *bool
 	Debug             *bool
 	Version           *bool
+	Similarity	  *float64
+	InputFile	  *string
 }
 
 func ParseOptions() (Options, error) {
@@ -43,6 +45,8 @@ func ParseOptions() (Options, error) {
 		Silent:            flag.Bool("silent", false, "Suppress all output except for errors"),
 		Debug:             flag.Bool("debug", false, "Print debugging information"),
 		Version:           flag.Bool("version", false, "Print current Aquatone version"),
+		Similarity:	   flag.Float64("similarity",0.80,"Cluster Similarity Float for Screenshots. Default 0.80"),
+		InputFile:	   flag.String("inputfile","","Input file to parse hosts (Nmap or Raw) rather than STDIN"),
 	}
 
 	flag.Parse()
