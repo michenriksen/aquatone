@@ -9,6 +9,7 @@ import (
 	"os"
 	"strings"
 	"time"
+	"io"
 
 	"github.com/google/uuid"
 	"github.com/michenriksen/aquatone/agents"
@@ -121,9 +122,22 @@ func main() {
 	agents.NewURLTechnologyFingerprinter().Register(sess)
 	agents.NewURLTakeoverDetector().Register(sess)
 
-	reader := bufio.NewReader(os.Stdin)
-	var targets []string
+	var reader io.Reader
+	if *sess.Options.InputFile != "" {
+		//Read from File
+		file, err := os.Open(*sess.Options.InputFile)
+		if err != nil {
+			sess.Out.Fatal("Unable to open input file: %s\n", *sess.Options.InputFile)
+			os.Exit(1)
+		}
+		defer file.Close()
 
+		reader = bufio.NewReader(file)
+	} else {
+		reader = bufio.NewReader(os.Stdin)
+	}
+
+	var targets []string
 	if *sess.Options.Nmap {
 		parser := parsers.NewNmapParser()
 		targets, err = parser.Parse(reader)
@@ -193,7 +207,7 @@ func main() {
 			addToCluster := true
 			for _, pageURL := range cluster {
 				page2 := sess.GetPage(pageURL)
-				if page2 != nil && core.GetSimilarity(page.PageStructure, page2.PageStructure) < 0.80 {
+				if page2 != nil && core.GetSimilarity(page.PageStructure, page2.PageStructure) < *sess.Options.Similarity {
 					addToCluster = false
 					break
 				}
