@@ -112,6 +112,8 @@ func main() {
 		os.Exit(0)
 	}
 
+	go core.DumpSessionOnSig(sess)
+
 	agents.NewTCPPortScanner().Register(sess)
 	agents.NewURLPublisher().Register(sess)
 	agents.NewURLRequester().Register(sess)
