@@ -112,7 +112,7 @@ Aquatone is designed to play nicely with all kinds of tools. Here's some example
 [Amass](https://github.com/OWASP/Amass) is currently my preferred tool for enumerating DNS. It uses a bunch of OSINT sources as well as active brute-forcing and clever permutations to quickly identify hundreds, if not thousands, of subdomains on a  domain:
 
 ```bash
-$ amass -active -brute -o hosts.txt -d yahoo.com
+$ amass enum -active -brute -o hosts.txt -d yahoo.com
 alerts.yahoo.com
 ads.yahoo.com
 am.yahoo.com
