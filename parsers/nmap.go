@@ -69,13 +69,12 @@ func (p *NmapParser) hostToURLs(host nmap.Host) []string {
 			for _, hostname := range host.Hostnames {
 				urls = append(urls, core.HostAndPortToURL(hostname.Name, port.PortId, protocol))
 			}
-		} else {
-			for _, address := range host.Addresses {
-				if address.AddrType == "mac" {
-					continue
-				}
-				urls = append(urls, core.HostAndPortToURL(address.Addr, port.PortId, protocol))
+		}
+		for _, address := range host.Addresses {
+			if address.AddrType == "mac" {
+				continue
 			}
+			urls = append(urls, core.HostAndPortToURL(address.Addr, port.PortId, protocol))
 		}
 	}
 
