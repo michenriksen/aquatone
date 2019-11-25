@@ -129,6 +129,7 @@ func (a *URLScreenshotter) screenshotPage(page *core.Page) {
 		"--headless", "--disable-gpu", "--hide-scrollbars", "--mute-audio", "--disable-notifications",
 		"--no-first-run", "--disable-crash-reporter", "--ignore-certificate-errors", "--incognito",
 		"--disable-infobars", "--disable-sync", "--no-default-browser-check",
+                "--disable-features=VizDisplayCompositor",
 		"--user-data-dir=" + a.tempUserDirPath,
 		"--user-agent=" + RandomUserAgent(),
 		"--window-size=" + *a.session.Options.Resolution,
