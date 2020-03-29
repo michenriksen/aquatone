@@ -19,6 +19,7 @@ import (
 
 	"github.com/asaskevich/EventBus"
 	"github.com/remeh/sizedwaitgroup"
+	"github.com/otiai10/copy"
 )
 
 type Stats struct {
@@ -287,6 +288,8 @@ func NewSession() (*Session, error) {
 		}
 	}
 
+
+
 	envOutPath := os.Getenv("AQUATONE_OUT_PATH")
 	if *session.Options.OutDir == "." && envOutPath != "" {
 		session.Options.OutDir = &envOutPath
@@ -294,6 +297,14 @@ func NewSession() (*Session, error) {
 
 	outdir := filepath.Clean(*session.Options.OutDir)
 	session.Options.OutDir = &outdir
+
+    if *session.Options.Offline  {
+		*session.Options.TemplatePath = "static/report_template_local.html"
+		err := copy.Copy("static/js_local_files", *session.Options.OutDir + "/js_local_files")
+		if err != nil{
+            return nil, fmt.Errorf("Error while copying static files:", err)
+        }
+	}
 
 	session.Version = Version
 	session.Start()
