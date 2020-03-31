@@ -25,6 +25,8 @@ If you for some reason don't trust the pre-compiled binaries, you can also compi
     	Timeout in miliseconds for HTTP requests (default 3000)
   -nmap
     	Parse input as Nmap/Masscan XML
+  -offline
+	Use offline js files to generate the default template report.
   -out string
     	Directory to write files to (default ".")
   -ports string

@@ -16,6 +16,8 @@ create_exe_archive() {
   echo "[*] Creating archive $OUTPUT ..."
   zip -j "$OUTPUT" aquatone.exe ../README.md ../LICENSE.txt > /dev/null
   rm -rf aquatone aquatone.exe
+  cd .. && zip -r "$BUILD_FOLDER/$OUTPUT" static > /dev/null
+  cd $BUILD_FOLDER
 }
 
 create_archive() {
@@ -24,8 +26,11 @@ create_archive() {
   OUTPUT=$1
 
   echo "[*] Creating archive $OUTPUT ..."
-  zip -j "$OUTPUT" aquatone ../README.md ../LICENSE.txt > /dev/null
+  zip -j "$OUTPUT" aquatone ../README.md ../LICENSE.txt  > /dev/null
   rm -rf aquatone aquatone.exe
+  cd .. && zip -r "$BUILD_FOLDER/$OUTPUT" static > /dev/null
+  cd $BUILD_FOLDER
+
 }
 
 build_linux_amd64() {

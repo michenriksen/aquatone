@@ -64,3 +64,7 @@
 [[constraint]]
   name = "github.com/PuerkitoBio/goquery"
   version = "1.4.1"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/otiai10/copy"

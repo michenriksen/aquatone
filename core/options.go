@@ -23,6 +23,7 @@ type Options struct {
 	Silent            *bool
 	Debug             *bool
 	Version           *bool
+	Offline           *bool
 }
 
 func ParseOptions() (Options, error) {
@@ -43,6 +44,7 @@ func ParseOptions() (Options, error) {
 		Silent:            flag.Bool("silent", false, "Suppress all output except for errors"),
 		Debug:             flag.Bool("debug", false, "Print debugging information"),
 		Version:           flag.Bool("version", false, "Print current Aquatone version"),
+		Offline:           flag.Bool("offline", false, "Use offline js files to generate the default template report."),
 	}
 
 	flag.Parse()
