@@ -39,6 +39,8 @@ If you for some reason don't trust the pre-compiled binaries, you can also compi
     	Timeout in miliseconds for port scans (default 100)
   -screenshot-timeout int
     	Timeout in miliseconds for screenshots (default 30000)
+  -screenshot-delay int
+    	Delay before taking screenshot (default 0 => deactivated)
   -session string
     	Load Aquatone session file and generate HTML report
   -silent
@@ -101,6 +103,16 @@ Aquatone also supports aliases of built-in port lists to make it easier for you:
 **Example:**
 
     $ cat hosts.txt | aquatone -ports large
+
+
+### Screenshot delay
+
+For example delaying capture, could be useful for javascript rendered pages (sleeping a couple of ms).
+The system waits the specified number of virtual milliseconds before deeming the page to be ready.
+
+**Example:**
+
+    $ cat hosts.txt | aquatone -screenshot-delay 10000
 
 
 ### Usage examples
