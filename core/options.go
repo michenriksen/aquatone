@@ -18,7 +18,7 @@ type Options struct {
 	ScanTimeout       *int
 	HTTPTimeout       *int
 	ScreenshotTimeout *int
-	ScreenshotDelay *int
+	ScreenshotDelay   *int
 	Nmap              *bool
 	SaveBody          *bool
 	Silent            *bool
