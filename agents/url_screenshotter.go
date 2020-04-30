@@ -144,7 +144,7 @@ func (a *URLScreenshotter) screenshotPage(page *core.Page) {
 	}
 	
 	if *a.session.Options.ScreenshotDelay > 0 {
-		chromeArguments = append(chromeArguments, "--virtual-time-budget="+*a.session.Options.ScreenshotDelay)
+		chromeArguments = append(chromeArguments, fmt.Sprint("--virtual-time-budget=", *a.session.Options.ScreenshotDelay))
 	}
 
 	chromeArguments = append(chromeArguments, page.URL)
