@@ -10,6 +10,9 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	
+	"path"
+	"path/filepath"
 
 	"github.com/michenriksen/aquatone/core"
 )
@@ -124,7 +127,24 @@ func (a *URLScreenshotter) locateChrome() {
 }
 
 func (a *URLScreenshotter) screenshotPage(page *core.Page) {
-	filePath := fmt.Sprintf("screenshots/%s.png", page.BaseFilename())
+	filename := fmt.Sprintf("%s.png", page.BaseFilename())
+	folder, err := filepath.Abs(a.session.GetFilePath("screenshots"))
+
+	if err != nil {
+		a.session.Out.Warn("Error while finding absolute path for screenshot file %s: %v", folder, err)
+		return
+	}
+	
+	if _, err := os.Stat(folder); os.IsNotExist(err) {
+		err = os.MkdirAll(folder, 0755)
+		if err != nil {
+			a.session.Out.Fatal("Failed to create required directory %s\n", folder)
+			os.Exit(1)
+		}
+	}
+	
+	screenshotPath := path.Join(folder, filename)
+	
 	var chromeArguments = []string{
 		"--headless", "--disable-gpu", "--hide-scrollbars", "--mute-audio", "--disable-notifications",
 		"--no-first-run", "--disable-crash-reporter", "--ignore-certificate-errors", "--incognito",
@@ -132,7 +152,7 @@ func (a *URLScreenshotter) screenshotPage(page *core.Page) {
 		"--user-data-dir=" + a.tempUserDirPath,
 		"--user-agent=" + RandomUserAgent(),
 		"--window-size=" + *a.session.Options.Resolution,
-		"--screenshot=" + a.session.GetFilePath(filePath),
+		"--screenshot=" + screenshotPath,
 	}
 
 	if os.Geteuid() == 0 {
@@ -173,7 +193,7 @@ func (a *URLScreenshotter) screenshotPage(page *core.Page) {
 
 	a.session.Stats.IncrementScreenshotSuccessful()
 	a.session.Out.Info("%s: %s\n", page.URL, Green("screenshot successful"))
-	page.ScreenshotPath = filePath
+	page.ScreenshotPath = screenshotPath
 	page.HasScreenshot = true
 	a.killChromeProcessIfRunning(cmd)
 }
