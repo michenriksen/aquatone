@@ -6,11 +6,9 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
-	"regexp"
-	"strconv"
-	"strings"
 	"time"
 
+	"github.com/chromedp/chromedp"
 	"github.com/michenriksen/aquatone/core"
 )
 
@@ -33,7 +31,6 @@ func (a *URLScreenshotter) Register(s *core.Session) error {
 	s.EventBus.SubscribeAsync(core.SessionEnd, a.OnSessionEnd, false)
 	a.session = s
 	a.createTempUserDir()
-	a.locateChrome()
 
 	return nil
 }
@@ -69,105 +66,48 @@ func (a *URLScreenshotter) createTempUserDir() {
 	a.tempUserDirPath = dir
 }
 
-func (a *URLScreenshotter) locateChrome() {
+func (a URLScreenshotter) getOpts() (options []chromedp.ExecAllocatorOption) {
+	if *a.session.Options.Proxy != "" {
+		options = append(options, chromedp.ProxyServer(*a.session.Options.Proxy))
+	}
+
 	if *a.session.Options.ChromePath != "" {
-		a.chromePath = *a.session.Options.ChromePath
-		return
+		options = append(options, chromedp.ExecPath(*a.session.Options.ChromePath))
 	}
 
-	paths := []string{
-		"/usr/bin/google-chrome",
-		"/usr/bin/google-chrome-beta",
-		"/usr/bin/google-chrome-unstable",
-		"/usr/bin/chromium-browser",
-		"/usr/bin/chromium",
-		"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-		"/Applications/Google Chrome Canary.app/Contents/MacOS/Google Chrome Canary",
-		"/Applications/Chromium.app/Contents/MacOS/Chromium",
-		"C:/Program Files (x86)/Google/Chrome/Application/chrome.exe",
-	}
+	return
+}
 
-	for _, path := range paths {
-		if _, err := os.Stat(path); os.IsNotExist(err) {
-			continue
-		}
-		a.chromePath = path
-	}
-
-	if a.chromePath == "" {
-		a.session.Out.Fatal("Unable to locate a valid installation of Chrome. Install Google Chrome or try specifying a valid location with the -chrome-path option.\n")
-		os.Exit(1)
-	}
-
-	if strings.Contains(strings.ToLower(a.chromePath), "chrome") {
-		a.session.Out.Warn("Using unreliable Google Chrome for screenshots. Install Chromium for better results.\n\n")
-	} else {
-		out, err := exec.Command(a.chromePath, "--version").Output()
-		if err != nil {
-			a.session.Out.Warn("An error occurred while trying to determine version of Chromium.\n\n")
-			return
-		}
-		version := string(out)
-		re := regexp.MustCompile(`(\d+)\.`)
-		match := re.FindStringSubmatch(version)
-		if len(match) <= 0 {
-			a.session.Out.Warn("Unable to determine version of Chromium. Screenshotting might be unreliable.\n\n")
-			return
-		}
-		majorVersion, _ := strconv.Atoi(match[1])
-		if majorVersion < 72 {
-			a.session.Out.Warn("An older version of Chromium is installed. Screenshotting of HTTPS URLs might be unreliable.\n\n")
-		}
-	}
-
-	a.session.Out.Debug("[%s] Located Chrome/Chromium binary at %s\n", a.ID(), a.chromePath)
+// execAllocator turns a.getOpts() (the chrome instance allocator options) into a derivative context.Context
+func (a URLScreenshotter) execAllocator(parent context.Context) (context.Context, context.CancelFunc) {
+	return chromedp.NewExecAllocator(parent, a.getOpts()...)
 }
 
 func (a *URLScreenshotter) screenshotPage(page *core.Page) {
 	filePath := fmt.Sprintf("screenshots/%s.png", page.BaseFilename())
-	var chromeArguments = []string{
-		"--headless", "--disable-gpu", "--hide-scrollbars", "--mute-audio", "--disable-notifications",
-		"--no-first-run", "--disable-crash-reporter", "--ignore-certificate-errors", "--incognito",
-		"--disable-infobars", "--disable-sync", "--no-default-browser-check",
-		"--user-data-dir=" + a.tempUserDirPath,
-		"--user-agent=" + RandomUserAgent(),
-		"--window-size=" + *a.session.Options.Resolution,
-		"--screenshot=" + a.session.GetFilePath(filePath),
-	}
-
-	if os.Geteuid() == 0 {
-		chromeArguments = append(chromeArguments, "--no-sandbox")
-	}
-
-	if *a.session.Options.Proxy != "" {
-		chromeArguments = append(chromeArguments, "--proxy-server="+*a.session.Options.Proxy)
-	}
-
-	chromeArguments = append(chromeArguments, page.URL)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(*a.session.Options.ScreenshotTimeout)*time.Millisecond)
+	ctx, cancel = a.execAllocator(ctx)
+	ctx, cancel = chromedp.NewContext(ctx)
+
 	defer cancel()
 
-	cmd := exec.CommandContext(ctx, a.chromePath, chromeArguments...)
-	if err := cmd.Start(); err != nil {
-		a.session.Out.Debug("[%s] Error: %v\n", a.ID(), err)
+	var pic []byte
+	if err := chromedp.Run(ctx, chromedp.Tasks{
+		chromedp.Navigate(page.URL),
+		chromedp.WaitReady("body", chromedp.ByQuery),
+		chromedp.Screenshot("body", &pic, chromedp.NodeVisible, chromedp.ByQuery),
+	}); err != nil {
+		a.session.Out.Debug("%s Error: %v\n", a.ID, err)
 		a.session.Stats.IncrementScreenshotFailed()
 		a.session.Out.Error("%s: screenshot failed: %s\n", page.URL, err)
-		a.killChromeProcessIfRunning(cmd)
 		return
 	}
 
-	if err := cmd.Wait(); err != nil {
+	if err := ioutil.WriteFile(filePath, pic, 0700); err != nil {
+		a.session.Out.Debug("%s Error: %v\n", a.ID(), err)
 		a.session.Stats.IncrementScreenshotFailed()
-		a.session.Out.Debug("[%s] Error: %v\n", a.ID(), err)
-		if ctx.Err() == context.DeadlineExceeded {
-			a.session.Out.Error("%s: screenshot timed out\n", page.URL)
-			a.killChromeProcessIfRunning(cmd)
-			return
-		}
-
 		a.session.Out.Error("%s: screenshot failed: %s\n", page.URL, err)
-		a.killChromeProcessIfRunning(cmd)
 		return
 	}
 
@@ -175,7 +115,6 @@ func (a *URLScreenshotter) screenshotPage(page *core.Page) {
 	a.session.Out.Info("%s: %s\n", page.URL, Green("screenshot successful"))
 	page.ScreenshotPath = filePath
 	page.HasScreenshot = true
-	a.killChromeProcessIfRunning(cmd)
 }
 
 func (a *URLScreenshotter) killChromeProcessIfRunning(cmd *exec.Cmd) {
