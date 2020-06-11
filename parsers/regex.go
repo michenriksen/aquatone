@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"io"
 
-	"github.com/mvdan/xurls"
+	"mvdan.cc/xurls/v2"
 )
 
 type RegexParser struct{}
