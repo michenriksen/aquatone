@@ -31,11 +31,19 @@ func (a *URLRequester) Register(s *core.Session) error {
 func (a *URLRequester) OnURL(url string) {
 	a.session.Out.Debug("[%s] Received new URL %s\n", a.ID(), url)
 	a.session.WaitGroup.Add()
+
+	var userAgent string
+	if *a.session.Options.UserAgent != "" {
+		userAgent = *a.session.Options.UserAgent
+	} else {
+		userAgent = RandomUserAgent()
+	}
+	
 	go func(url string) {
 		defer a.session.WaitGroup.Done()
 		http := Gorequest(a.session.Options)
 		resp, _, errs := http.Get(url).
-			Set("User-Agent", RandomUserAgent()).
+			Set("User-Agent", userAgent).
 			Set("X-Forwarded-For", RandomIPv4Address()).
 			Set("Via", fmt.Sprintf("1.1 %s", RandomIPv4Address())).
 			Set("Forwarded", fmt.Sprintf("for=%s;proto=http;by=%s", RandomIPv4Address(), RandomIPv4Address())).End()
