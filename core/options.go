@@ -15,6 +15,7 @@ type Options struct {
 	ChromePath        *string
 	Resolution        *string
 	Ports             *string
+	UserAgent         *string
 	ScanTimeout       *int
 	HTTPTimeout       *int
 	ScreenshotTimeout *int
@@ -35,6 +36,7 @@ func ParseOptions() (Options, error) {
 		ChromePath:        flag.String("chrome-path", "", "Full path to the Chrome/Chromium executable to use. By default, aquatone will search for Chrome or Chromium"),
 		Resolution:        flag.String("resolution", "1440,900", "screenshot resolution"),
 		Ports:             flag.String("ports", strings.Trim(strings.Join(strings.Fields(fmt.Sprint(MediumPortList)), ","), "[]"), "Ports to scan on hosts. Supported list aliases: small, medium, large, xlarge"),
+		UserAgent:         flag.String("user-agent", "", "User-Agent header"),		
 		ScanTimeout:       flag.Int("scan-timeout", 100, "Timeout in miliseconds for port scans"),
 		HTTPTimeout:       flag.Int("http-timeout", 3*1000, "Timeout in miliseconds for HTTP requests"),
 		ScreenshotTimeout: flag.Int("screenshot-timeout", 30*1000, "Timeout in miliseconds for screenshots"),
