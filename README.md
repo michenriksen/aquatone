@@ -30,7 +30,7 @@ If you for some reason don't trust the pre-compiled binaries, you can also compi
   -ports string
     	Ports to scan on hosts. Supported list aliases: small, medium, large, xlarge (default "80,443,8000,8080,8443")
   -user-agent string
-		User-Agent header
+	User-Agent header
   -proxy string
     	Proxy to use for HTTP requests
   -resolution string
