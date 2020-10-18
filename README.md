@@ -22,7 +22,7 @@ If you for some reason don't trust the pre-compiled binaries, you can also compi
   -debug
     	Print debugging information
   -http-timeout int
-    	Timeout in miliseconds for HTTP requests (default 3000)
+    	Timeout in milliseconds for HTTP requests (default 3000)
   -nmap
     	Parse input as Nmap/Masscan XML
   -out string
@@ -36,9 +36,9 @@ If you for some reason don't trust the pre-compiled binaries, you can also compi
   -save-body
     	Save response bodies to files (default true)
   -scan-timeout int
-    	Timeout in miliseconds for port scans (default 100)
+    	Timeout in milliseconds for port scans (default 100)
   -screenshot-timeout int
-    	Timeout in miliseconds for screenshots (default 30000)
+    	Timeout in milliseconds for screenshots (default 30000)
   -session string
     	Load Aquatone session file and generate HTML report
   -silent
