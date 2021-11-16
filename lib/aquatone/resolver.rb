@@ -11,7 +11,7 @@ module Aquatone
     end
 
     def resolve(host)
-      retried = false
+      retried = false if retried.nil?
       host    = "#{host}." unless host.end_with?(".")
       return (resolve_with_nameserver(host) || resolve_with_fallback_nameserver(host))
     rescue
