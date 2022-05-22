@@ -101,6 +101,14 @@ Aquatone also supports aliases of built-in port lists to make it easier for you:
 **Example:**
 
     $ cat hosts.txt | aquatone -ports large
+    
+### Installation [Linux]
+
+```
+wget https://github.com/michenriksen/aquatone/releases/download/v1.7.0/aquatone_linux_amd64_1.7.0.zip
+unzip aquatone_linux_amd64_1.7.0.zip
+mv aquatone /usr/local/bin
+```
 
 
 ### Usage examples
